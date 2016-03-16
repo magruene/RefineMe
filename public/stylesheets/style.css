@@ -1,0 +1,13 @@
+.estimationText {
+  font-size: 250px;
+  line-height: 300px;
+}
+.estimationText-important {
+  font-size: 250px !important;
+  line-height: 300px !important;
+}
+.preloader-wrapper.big {
+  width: 250px;
+  height: 250px;
+  margin-top: 25px;
+}

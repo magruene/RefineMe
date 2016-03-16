@@ -1,0 +1,30 @@
+extends layout
+
+block content
+    #createEstimation.modal
+        .modal-content
+            h4 Give the estimation a name
+            p e.g. the jira story (SAM-****)
+            input(name="estimationName", type="text", placeholder="Name me please")
+        .modal-footer
+            a.modal-action.modal-close.waves-effect.waves-green.btn-flat(href='#!') Create
+    // Dropdown Structure
+    ul#availableEstimations.dropdown-content
+        li
+            a.modal-trigger(href='#createEstimation') Create estimation
+        li.divider
+
+    nav.nav-wrapper
+        a#chat-title.brand-logo(href='#') welcome to the RefineMe session!
+        ul#nav-mobile.right.hide-on-med-and-down
+            li#endEstimationButton(style="display:none")
+                a.btn(href='#!') Finish estimation
+            li#availableEstimationsDropdown.hide
+                a.dropdown-button(href='#!', data-activates='availableEstimations') Available sessions
+                    i.material-icons.right arrow_drop_down
+            li
+                a#leave-session(href='#') Leave session
+    .chat-app
+        #session-id
+        #users.row
+    script(src='/javascripts/session.js')

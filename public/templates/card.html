@@ -1,0 +1,54 @@
+<div id="card_{{user}}" class="col m4">
+    <div class="card">
+        <div class="card-image center" style="height: 300px;">
+            <div id="estimationText" class="light-green estimationText" >?</div>
+            <div style="display: none;" class="preloader-wrapper big active">
+                <div class="spinner-layer spinner-blue">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div><div class="gap-patch">
+                    <div class="circle"></div>
+                </div><div class="circle-clipper right">
+                    <div class="circle"></div>
+                </div>
+                </div>
+
+                <div class="spinner-layer spinner-red">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div><div class="gap-patch">
+                    <div class="circle"></div>
+                </div><div class="circle-clipper right">
+                    <div class="circle"></div>
+                </div>
+                </div>
+
+                <div class="spinner-layer spinner-yellow">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div><div class="gap-patch">
+                    <div class="circle"></div>
+                </div><div class="circle-clipper right">
+                    <div class="circle"></div>
+                </div>
+                </div>
+
+                <div class="spinner-layer spinner-green">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div><div class="gap-patch">
+                    <div class="circle"></div>
+                </div><div class="circle-clipper right">
+                    <div class="circle"></div>
+                </div>
+                </div>
+            </div>
+            <div id="estimationDone" style="display: none;"><i class="material-icons">done</i></div>
+            <span class="card-title black-text">{{user}}</span>
+        </div>
+        <div class="hide card-action">
+            <a class="dropdown-button btn" href="#" data-activates="dropdown_{{user}}">Choose a number</a>
+            <a id="acceptEstimation" class="btn right" href="#">Accept</a>
+        </div>
+    </div>
+</div>
