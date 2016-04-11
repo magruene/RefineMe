@@ -8,7 +8,7 @@
     var estimationNumbersTemplate;
     // attempt connection to the server
     try {
-        var server = io.connect('54.197.235.183:5000');
+        var server = io.connect('secure-refuge-98717.herokuapp.com:5000');
     } catch (e) {
         alert('Sorry, we couldn\'t connect. Please try again later \n\n' + e);
     }
