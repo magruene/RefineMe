@@ -8,7 +8,7 @@
     var estimationNumbersTemplate;
     // attempt connection to the server
     try {
-        var server = io.connect('ancient-journey-65390.herokuapp.com');
+        var server = io.connect(global.location.host);
     } catch (e) {
         alert('Sorry, we couldn\'t connect. Please try again later \n\n' + e);
     }
@@ -107,7 +107,8 @@
         $('#users').empty();
         var $availableEstimations = $("#availableEstimations");
         $availableEstimations.empty();
-        $availableEstimations.append('<li><a class="modal-trigger" href="#createEstimation">Create estimation</a></li><li class="divider" /> ')
+        $availableEstimations.append('<li><a class="modal-trigger" href="#createEstimation">Create estimation</a></li><li class="divider" /> ');
+        $('.modal-trigger').leanModal();
         $.each(session.estimations, function (index, estimation) {
             $availableEstimations.append('<li class="selectable"><a href="#!">' + estimation.name + '</a></li>')
         });
