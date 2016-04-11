@@ -8,7 +8,7 @@
     var estimationNumbersTemplate;
     // attempt connection to the server
     try {
-        var server = io.connect('http://127.0.0.1:3000');
+        var server = io.connect(global.location.href + ':3000');
     } catch (e) {
         alert('Sorry, we couldn\'t connect. Please try again later \n\n' + e);
     }
@@ -58,7 +58,7 @@
             if (isLeader) {
                 $('#availableEstimationsDropdown').removeClass("hide");
                 $(".modal-action").click(function () {
-                   var estimationName = $("input[name='estimationName']").val();
+                    var estimationName = $("input[name='estimationName']").val();
                     server.emit('create-estimation', estimationName);
                 });
 
@@ -92,7 +92,7 @@
         });
 
         server.on('update-view', function (session) {
-            if(!cardTemplate) {
+            if (!cardTemplate) {
                 $.ajax("/templates/card.html").success(function (data) {
                     cardTemplate = data;
                     updateView(session, cardTemplate);
@@ -121,7 +121,7 @@
             var $card = $('#card_' + user);
             $.each(session.estimations, function (index, estimation) {
                 if (estimation.active) {
-                    $.each(estimation.estimates, function(index, estimate) {
+                    $.each(estimation.estimates, function (index, estimate) {
                         if (estimate.user === session_username) {
                             $($card.find("#estimationText")).html(estimate.estimation);
                         }
@@ -131,7 +131,7 @@
             if (isCurrentUser) {
                 $card.addClass("active");
                 $($card.find(".card-action")).removeClass("hide");
-                if(!estimationNumbersTemplate) {
+                if (!estimationNumbersTemplate) {
                     $.ajax({
                         url: "/templates/estimationNumbers.html",
                         async: false
@@ -168,7 +168,7 @@
         });
     }
 
-    $(document).ready(function(){
+    $(document).ready(function () {
         // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
         $('.modal-trigger').leanModal();
     });

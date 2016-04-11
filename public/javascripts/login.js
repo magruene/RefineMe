@@ -1,4 +1,4 @@
-(function(global, $){
+(function (global, $) {
 
     var session_token = $('#session_token'),
         user_name = $('#user_name'),
@@ -7,19 +7,19 @@
 
     // attempt to establish a connection to the server
     try {
-        var server = io.connect('http://127.0.0.1:3000');
+        var server = io.connect(global.location.href + ':3000');
     }
-    catch(e) {
+    catch (e) {
         alert('Sorry, we couldn\'t connect. Please try again later \n\n' + e);
     }
 
     // if successful
-    if(server !== undefined) {
+    if (server !== undefined) {
 
         console.log("Connection established...");
 
         // add the event listener for the login submit button
-        submit_button.click(function(event){
+        submit_button.click(function (event) {
             // send the values to the server
             server.emit('join', {
                 token: session_token.val(),
@@ -36,7 +36,8 @@
         });
 
         // alert error messages returned from the server
-        server.on('alert', function(msg){
+        server.on('alert', function (msg) {
+            console.log(msg);
             alert(msg);
         });
 
@@ -45,7 +46,7 @@
             sessionStorage.setItem('ss_token', token);
         });
 
-        server.on('redirect', function(href){
+        server.on('redirect', function (href) {
             window.location.assign(href);
         });
     }
