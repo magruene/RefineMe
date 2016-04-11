@@ -7,7 +7,7 @@
 
     // attempt to establish a connection to the server
     try {
-        var server = io.connect(global.location.href + ':3000');
+        var server = io.connect('54.197.235.183:3000');
     }
     catch (e) {
         alert('Sorry, we couldn\'t connect. Please try again later \n\n' + e);
