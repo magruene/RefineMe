@@ -107,6 +107,7 @@
         $('#users').empty();
         var $availableEstimations = $("#availableEstimations");
         $availableEstimations.empty();
+        $availableEstimations.append('<li><a class="modal-trigger" href="#createEstimation">Create estimation</a></li><li class="divider" /> ')
         $.each(session.estimations, function (index, estimation) {
             $availableEstimations.append('<li class="selectable"><a href="#!">' + estimation.name + '</a></li>')
         });
