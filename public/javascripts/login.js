@@ -7,7 +7,7 @@
 
     // attempt to establish a connection to the server
     try {
-        var server = io.connect('secure-refuge-98717.herokuapp.com');
+        var server = io.connect('ancient-journey-65390.herokuapp.com');
     }
     catch (e) {
         alert('Sorry, we couldn\'t connect. Please try again later \n\n' + e);
