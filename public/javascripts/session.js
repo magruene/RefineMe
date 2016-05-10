@@ -118,7 +118,7 @@
             $("#current-estimation").text("None selected. Do so from the dropdown above!");
         }
 
-        $("#invite-url").append("<a href='https://ancient-journey-65390.herokuapp.com?session_token='" + session.token);
+        $("#invite-url").append("<a href='https://ancient-journey-65390.herokuapp.com?session_token=" + session.token + "'>copyme</a>");
 
         $($availableEstimations.find("li.selectable")).click(function (event) {
             server.emit('select-estimation', $(event.target).text());
