@@ -7,7 +7,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/login', function(req, res, next) {
-  res.render('login', { title: 'RefineMe' });
+  res.render('login', { title: 'RefineMe', session_token: req.query.session_token });
 });
 router.get('/session', function(req, res, next) {
   res.render('session', { title: 'RefineMe' });
