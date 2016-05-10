@@ -3,10 +3,10 @@ extends layout
 block content
     #chat-login-wrapper.container.row.center-align
         .col.m6.offset-m3
-            h1 Login to Instant Chat!
+            h1 Welcome to RefineMe!
             form#chat-signup
                 input#user_name(type='text', placeholder='enter your name', autofocus='')
-                input#session_token(type='text', placeholder='enter your session token')
+                input#session_token(type='text', name='session_token' placeholder='enter your session token')
                 .row
                     input#submit_button(type='button', value='Join session').waves-effect.waves-light.btn.col.m6
                     input#create_button(type='button', value='Create new session').waves-effect.waves-light.btn.col.m6

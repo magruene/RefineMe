@@ -3,7 +3,6 @@
     var session_username = sessionStorage.getItem('ss_user_name');
     var activeEstimation;
     var isLeader;
-    var $chatTitle = $('#chat-title');
     var cardTemplate;
     var estimationNumbersTemplate;
     // attempt connection to the server
@@ -51,9 +50,6 @@
         server.on('prepare-session-screen', function (session) {
             console.log(session);
             $('#users').empty();
-            $('#session-id').html("Session token: " + session.token);
-            var name = session_username + ', ';
-            $chatTitle.html(name.concat($chatTitle.html()));
             isLeader = session.leader === sessionStorage.getItem('ss_user_name');
             if (isLeader) {
                 $('#availableEstimationsDropdown').removeClass("hide");
@@ -75,7 +71,6 @@
         server.on("selectedEstimation", function (session) {
             $.each(session.users, function (index, user) {
                 var $card = $('#card_' + user);
-                $($card.find("#estimationText")).html("?");
                 updateView(session)
             });
         });
@@ -106,12 +101,25 @@
     function updateView(session) {
         $('#users').empty();
         var $availableEstimations = $("#availableEstimations");
+        var activeEstimation;
         $availableEstimations.empty();
         $availableEstimations.append('<li><a class="modal-trigger" href="#createEstimation">Create estimation</a></li><li class="divider" /> ');
         $('.modal-trigger').leanModal();
         $.each(session.estimations, function (index, estimation) {
             $availableEstimations.append('<li class="selectable"><a href="#!">' + estimation.name + '</a></li>')
+            if (estimation.active) {
+                activeEstimation = estimation;
+            }
         });
+
+        if (activeEstimation) {
+            $("#current-estimation").text(activeEstimation.name);
+        } else {
+            $("#current-estimation").text("None selected. Do so from the dropdown above!");
+        }
+
+        $("#invite-url").append("<a href='https://ancient-journey-65390.herokuapp.com?session_token='" + session.token);
+
         $($availableEstimations.find("li.selectable")).click(function (event) {
             server.emit('select-estimation', $(event.target).text());
         });
@@ -121,13 +129,9 @@
             var isCurrentUser = user === sessionStorage.getItem('ss_user_name');
             $('#users').append(card);
             var $card = $('#card_' + user);
-            $.each(session.estimations, function (index, estimation) {
-                if (estimation.active) {
-                    $.each(estimation.estimates, function (index, estimate) {
-                        if (estimate.user === session_username) {
-                            $($card.find("#estimationText")).html(estimate.estimation);
-                        }
-                    });
+            $.each(activeEstimation.estimates, function (index, estimate) {
+                if (estimate.user === session_username) {
+                    $($card.find("#estimationText")).html(estimate.estimation);
                 }
             });
             if (isCurrentUser) {
