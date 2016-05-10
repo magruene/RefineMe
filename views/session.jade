@@ -9,13 +9,16 @@ block content
         .modal-footer
             a.modal-action.modal-close.waves-effect.waves-green.btn-flat(href='#!') Create
     // Dropdown Structure
-    ul#availableEstimations.dropdown-content
+    ul#availableEstimations.availableEstimations.dropdown-content
         li
             a.modal-trigger(href='#createEstimation') Create estimation
         li.divider
 
     nav.nav-wrapper
-        a#chat-title.brand-logo.hide-on-med-and-down(href='#') RefineMe
+        ul#slide-out.side-nav
+        a#chat-title.brand-logo(href='#') RefineMe
+        a.button-collapse(href='#', data-activates='slide-out')
+            i.mdi-navigation-menu
         ul#nav-mobile.right.hide-on-med-and-down
             li
                 span#invite-url
@@ -29,7 +32,7 @@ block content
     .chat-app
         #overview.row
 
-            .col.m12
+            .col.m12.s12
                 .card
                     .card-content.row
                         .col.m6

@@ -4,6 +4,7 @@
     var activeEstimation;
     var isLeader;
     var cardTemplate;
+    var mobileMenuTemplate;
     var estimationNumbersTemplate;
     // attempt connection to the server
     try {
@@ -12,7 +13,31 @@
         alert('Sorry, we couldn\'t connect. Please try again later \n\n' + e);
     }
 
+    $(".button-collapse").sideNav({
+        menuWidth: 240, // Default is 240
+        closeOnClick: true // Closes side-nav on <a> clicks, useful for Angular/Meteor
+    });
+
     // if the server connection is successful
+    function appendInviteButton(session) {
+        $("#invite-url").empty();
+        $("#invite-url").append("<input type='text' class='col hide m6' value='ancient-journey-65390.herokuapp.com/login?session_token=" + session.token + "' /><button class='waves-effect waves-light btn col'>Invite members</button>");
+        $("#invite-url button").click(function () {
+            var copyText = $('#invite-url input');
+            copyText.removeClass("hide");
+            copyText.focus();
+            copyText.select();
+            try {
+                if (document.execCommand('copy')) {
+                    Materialize.toast("Successfully copied link to clipboard!", 4000, 'rounded');
+                    copyText.addClass("hide");
+                }
+            } catch (err) {
+                Materialize.toast("Wasn't able to copy link to clipboard, sorry.", 4000, 'rounded');
+            }
+        });
+    }
+
     if (server !== undefined) {
         $('#leave-session').click(function (event) {
             server.emit('leave-session', {
@@ -47,7 +72,7 @@
         });
 
         server.on('prepare-session-screen', function (session) {
-            console.log(session);
+
             $("#session_token").text(session.token);
             $('#users').empty();
             isLeader = session.leader === sessionStorage.getItem('ss_user_name');
@@ -87,26 +112,33 @@
         });
 
         server.on('update-view', function (session) {
-            if (!cardTemplate) {
-                $.ajax("/templates/card.html").success(function (data) {
-                    cardTemplate = data;
-                    updateView(session, cardTemplate);
+            if (!cardTemplate && !mobileMenuTemplate) {
+                $.ajax("/templates/card.html").success(function (card) {
+                    $.ajax("/templates/mobileMenu.html").success(function (mobileMenu) {
+                        cardTemplate = card;
+                        mobileMenuTemplate = mobileMenu;
+                        updateView(session);
+                    });
                 });
             } else {
-                updateView(session, cardTemplate);
+                updateView(session);
             }
         });
     }
 
     function updateView(session) {
         $('#users').empty();
-        var $availableEstimations = $("#availableEstimations");
+        $('#slide-out').empty();
+        $("#slide-out").append(mobileMenuTemplate);
+        appendInviteButton(session);
+        $('.collapsible').collapsible();
         var activeEstimation;
+        var $availableEstimations = $(".availableEstimations");
         $availableEstimations.empty();
         $availableEstimations.append('<li><a class="modal-trigger" href="#createEstimation">Create estimation</a></li><li class="divider" /> ');
         $('.modal-trigger').leanModal();
         $.each(session.estimations, function (index, estimation) {
-            $availableEstimations.append('<li class="selectable"><a href="#!">' + estimation.name + '</a></li>')
+            $availableEstimations.append('<li class="selectable"><a href="#!">' + estimation.name + '</a></li>');
             if (estimation.active) {
                 activeEstimation = estimation;
             }
@@ -117,22 +149,6 @@
         } else {
             $("#current-estimation").text("None selected. Do so from the dropdown above!");
         }
-        $("#invite-url").empty();
-        $("#invite-url").append("<input type='text' class='col hide m6' value='ancient-journey-65390.herokuapp.com/login?session_token=" + session.token + "' /><button class='waves-effect waves-light btn col'>Invite members</button>");
-        $("#invite-url button").click(function () {
-            var copyText = $('#invite-url input');
-            copyText.removeClass("hide");
-            copyText.focus();
-            copyText.select();
-            try {
-                if(document.execCommand('copy')) {
-                    Materialize.toast("Successfully copied link to clipboard!", 4000, 'rounded');
-                    copyText.addClass("hide");
-                }
-            } catch (err) {
-                Materialize.toast("Wasn't able to copy link to clipboard, sorry.", 4000, 'rounded');
-            }
-        });
 
         $($availableEstimations.find("li.selectable")).click(function (event) {
             server.emit('select-estimation', $(event.target).text());
@@ -143,11 +159,13 @@
             var isCurrentUser = user === sessionStorage.getItem('ss_user_name');
             $('#users').append(card);
             var $card = $('#card_' + user);
-            $.each(activeEstimation.estimates, function (index, estimate) {
-                if (estimate.user === session_username) {
-                    $($card.find("#estimationText")).html(estimate.estimation);
-                }
-            });
+            if (activeEstimation) {
+                $.each(activeEstimation.estimates, function (index, estimate) {
+                    if (estimate.user === session_username) {
+                        $($card.find("#estimationText")).html(estimate.estimation);
+                    }
+                });
+            }
             if (isCurrentUser) {
                 $card.addClass("active");
                 $($card.find(".card-action")).removeClass("hide");
