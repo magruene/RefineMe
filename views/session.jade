@@ -17,6 +17,8 @@ block content
     nav.nav-wrapper
         a#chat-title.brand-logo.hide-on-med-and-down(href='#') RefineMe
         ul#nav-mobile.right.hide-on-med-and-down
+            li
+                span#invite-url
             li#endEstimationButton(style="display:none")
                 a.btn(href='#!') Finish estimation
             li#availableEstimationsDropdown.hide
@@ -26,17 +28,18 @@ block content
                 a#leave-session(href='#') Leave session
     .chat-app
         #overview.row
+
             .col.m12
                 .card
                     .card-content.row
-                        .col.m4
+                        .col.m6
                             div
-                                | Invite your team members:&nbsp;
-                                span#invite-url
+                                | Session token:&nbsp;
+                                span#session_token
                             div
                                 | Current estimation:&nbsp;
                                 span#current-estimation
-                        .col.m8
+                        .col.m6
                             #result
         #users.row
     script(src='/javascripts/session.js')
