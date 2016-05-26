@@ -20,22 +20,26 @@
 
     // if the server connection is successful
     function appendInviteButton(session) {
-        $("#invite-url").empty();
-        $("#invite-url").append("<input type='text' class='col hide m6' value='ancient-journey-65390.herokuapp.com/login?session_token=" + session.token + "' /><button class='waves-effect waves-light btn col'>Invite members</button>");
-        $("#invite-url button").click(function () {
-            var copyText = $('#invite-url input');
-            copyText.removeClass("hide");
-            copyText.focus();
-            copyText.select();
-            try {
-                if (document.execCommand('copy')) {
-                    Materialize.toast("Successfully copied link to clipboard!", 4000, 'rounded');
-                    copyText.addClass("hide");
+        $.each($("#invite-url"), function (index, element) {
+            var $element = $(element);
+            $element.empty();
+            $element.append("<input type='text' class='col hide m6' value='ancient-journey-65390.herokuapp.com/login?session_token=" + session.token + "' /><button class='waves-effect waves-light btn col'>Invite members</button>");
+            $($element.find("button")).click(function () {
+                var copyText = $($element.find("input"));
+                copyText.removeClass("hide");
+                copyText.focus();
+                copyText.select();
+                try {
+                    if (document.execCommand('copy')) {
+                        Materialize.toast("Successfully copied link to clipboard!", 4000, 'rounded');
+                        copyText.addClass("hide");
+                    }
+                } catch (err) {
+                    Materialize.toast("Wasn't able to copy link to clipboard, sorry.", 4000, 'rounded');
                 }
-            } catch (err) {
-                Materialize.toast("Wasn't able to copy link to clipboard, sorry.", 4000, 'rounded');
-            }
+            });
         });
+
     }
 
     if (server !== undefined) {
