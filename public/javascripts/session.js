@@ -68,7 +68,7 @@
                 $($card.find("#estimationText")).html(estimate.estimation);
                 $($card.find("#estimationText")).show();
             });
-            $('#endEstimationButton').hide();
+            $('#endEstimationButton a').hide();
         });
 
         server.on('prepare-session-screen', function (session) {
@@ -84,7 +84,7 @@
                 });
 
                 server.on("everyoneMadeEstimation", function () {
-                    $('#endEstimationButton').show();
+                    $('#endEstimationButton a').show();
                 });
 
                 $("#endEstimationButton").click(function () {
