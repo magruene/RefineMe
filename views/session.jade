@@ -20,8 +20,6 @@ block content
         a.button-collapse(href='#', data-activates='slide-out')
             i.mdi-navigation-menu
         ul#nav-mobile.right.hide-on-med-and-down
-            li
-                span#invite-url
             li#endEstimationButton(style="display:none")
                 a.btn(href='#!') Finish estimation
             li#availableEstimationsDropdown.hide
@@ -42,6 +40,8 @@ block content
                             div
                                 | Current estimation:&nbsp;
                                 span#current-estimation
+                            div
+                                span#invite-url
                         .col.m6
                             #result
         #users.row

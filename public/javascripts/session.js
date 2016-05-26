@@ -83,6 +83,21 @@
                     server.emit('create-estimation', estimationName);
                 });
 
+                var $availableEstimations = $(".availableEstimations");
+                $availableEstimations.empty();
+                $availableEstimations.append('<li><a class="modal-trigger" href="#createEstimation">Create estimation</a></li><li class="divider" /> ');
+                $('.modal-trigger').leanModal();
+                $.each(session.estimations, function (index, estimation) {
+                    $availableEstimations.append('<li class="selectable"><a href="#!">' + estimation.name + '</a></li>');
+                    if (estimation.active) {
+                        activeEstimation = estimation;
+                    }
+                });
+
+                $($availableEstimations.find("li.selectable")).click(function (event) {
+                    server.emit('select-estimation', $(event.target).text());
+                });
+
                 server.on("everyoneMadeEstimation", function () {
                     $('#endEstimationButton a').show();
                 });
@@ -132,27 +147,13 @@
         $("#slide-out").append(mobileMenuTemplate);
         appendInviteButton(session);
         $('.collapsible').collapsible();
-        var activeEstimation;
-        var $availableEstimations = $(".availableEstimations");
-        $availableEstimations.empty();
-        $availableEstimations.append('<li><a class="modal-trigger" href="#createEstimation">Create estimation</a></li><li class="divider" /> ');
-        $('.modal-trigger').leanModal();
-        $.each(session.estimations, function (index, estimation) {
-            $availableEstimations.append('<li class="selectable"><a href="#!">' + estimation.name + '</a></li>');
-            if (estimation.active) {
-                activeEstimation = estimation;
-            }
-        });
+
 
         if (activeEstimation) {
             $("#current-estimation").text(activeEstimation.name);
         } else {
             $("#current-estimation").text("None selected. Do so from the dropdown above!");
         }
-
-        $($availableEstimations.find("li.selectable")).click(function (event) {
-            server.emit('select-estimation', $(event.target).text());
-        });
 
         $.each(session.users, function (index, user) {
             var card = cardTemplate.replace(new RegExp("{{user}}", "g"), user);
