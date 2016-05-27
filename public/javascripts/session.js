@@ -42,6 +42,17 @@
 
     }
 
+    function newEstimateAdded(userWhoAddedEstimate) {
+        var $card = $('#card_' + userWhoAddedEstimate);
+        $($card.find(".preloader-wrapper")).hide();
+        if (userWhoAddedEstimate === session_username) {
+            $($card.find("#estimationDone i")).addClass("estimationText");
+        } else {
+            $($card.find("#estimationDone i")).addClass("estimationText-important")
+        }
+        $($card.find("#estimationDone")).show();
+    }
+
     if (server !== undefined) {
         $('.leave-session').click(function (event) {
             server.emit('leave-session', {
@@ -97,14 +108,7 @@
         });
 
         server.on("newEstimateAdded", function (userWhoAddedEstimate) {
-            var $card = $('#card_' + userWhoAddedEstimate);
-            $($card.find(".preloader-wrapper")).hide();
-            if (userWhoAddedEstimate === session_username) {
-                $($card.find("#estimationDone i")).addClass("estimationText");
-            } else {
-                $($card.find("#estimationDone i")).addClass("estimationText-important")
-            }
-            $($card.find("#estimationDone")).show();
+            newEstimateAdded(userWhoAddedEstimate);
         });
 
         server.on('update-view', function (session) {
@@ -142,9 +146,6 @@
             $('.modal-trigger').leanModal();
             $.each(session.estimations, function (index, estimation) {
                 $availableEstimations.append('<li class="selectable"><a href="#!">' + estimation.name + '</a></li>');
-                if (estimation.active) {
-                    activeEstimation = estimation;
-                }
             });
 
             $($availableEstimations.find("li.selectable")).click(function (event) {
@@ -175,6 +176,8 @@
                 $.each(activeEstimation.estimates, function (index, estimate) {
                     if (estimate.user === session_username) {
                         $($card.find("#estimationText")).html(estimate.estimation);
+                    } else {
+                        newEstimateAdded(estimate.user);
                     }
                 });
             }
