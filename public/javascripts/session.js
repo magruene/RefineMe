@@ -46,6 +46,7 @@
         var $card = $('#card_' + userWhoAddedEstimate);
         $($card.find(".preloader-wrapper")).hide();
         if (userWhoAddedEstimate === session_username) {
+            $($card.find("#estimationText")).html(estimate.estimation);
             $($card.find("#estimationDone i")).addClass("estimationText");
         } else {
             $($card.find("#estimationDone i")).addClass("estimationText-important")
@@ -194,14 +195,7 @@
 
         if (activeEstimation) {
             $.each(activeEstimation.estimates, function (index, estimate) {
-                var user = estimate.user;
-                var $card = $('#card_' + user);
-
-                if (user === session_username) {
-                    $($card.find("#estimationText")).html(estimate.estimation);
-                } else {
-                    newEstimateAdded(user);
-                }
+                newEstimateAdded(estimate.user);
             });
         }
     }
