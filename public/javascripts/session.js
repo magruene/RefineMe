@@ -196,7 +196,7 @@
                 newEstimateAdded(user);
             });
 
-            if (estimation.estimates.length === session.users.length) {
+            if (activeEstimation.estimates.length === session.users.length) {
                 $('.endEstimationButton').show();
             }
         }
