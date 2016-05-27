@@ -72,7 +72,7 @@
                 $($card.find("#estimationText")).html(estimate.estimation);
                 $($card.find("#estimationText")).show();
             });
-            $('.endEstimationButton a').hide();
+            $('.endEstimationButton').hide();
         });
 
         server.on('prepare-session-screen', function (session) {
@@ -103,7 +103,7 @@
                 });
 
                 server.on("everyoneMadeEstimation", function () {
-                    $('.endEstimationButton a').show();
+                    $('.endEstimationButton').show();
                 });
 
                 $(".endEstimationButton").click(function () {
@@ -152,6 +152,11 @@
         appendInviteButton(session);
         $('.collapsible').collapsible();
 
+        $.each(session.estimations, function (index, estimation) {
+            if (estimation.active) {
+                activeEstimation = estimation;
+            }
+        });
 
         if (activeEstimation) {
             $("#current-estimation").text(activeEstimation.name);
