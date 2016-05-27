@@ -23,7 +23,7 @@
         $.each($(".invite-url"), function (index, element) {
             var $element = $(element);
             $element.empty();
-            $element.append("<input type='text' class='col hide m6' value='ancient-journey-65390.herokuapp.com/login?session_token=" + session.token + "' /><button class='waves-effect waves-light btn col'>Invite members</button>");
+            $element.append("<input type='text' class='col hide m6' value='https://ancient-journey-65390.herokuapp.com/login?session_token=" + session.token + "' /><button class='waves-effect waves-light btn col'>Invite members</button>");
             $($element.find("button")).click(function () {
                 var copyText = $($element.find("input"));
                 copyText.removeClass("hide");
@@ -86,29 +86,6 @@
                     var estimationName = $("input[name='estimationName']").val();
                     server.emit('create-estimation', estimationName);
                 });
-
-                var $availableEstimations = $(".availableEstimations");
-                $availableEstimations.empty();
-                $availableEstimations.append('<li><a class="modal-trigger" href="#createEstimation">Create estimation</a></li><li class="divider" /> ');
-                $('.modal-trigger').leanModal();
-                $.each(session.estimations, function (index, estimation) {
-                    $availableEstimations.append('<li class="selectable"><a href="#!">' + estimation.name + '</a></li>');
-                    if (estimation.active) {
-                        activeEstimation = estimation;
-                    }
-                });
-
-                $($availableEstimations.find("li.selectable")).click(function (event) {
-                    server.emit('select-estimation', $(event.target).text());
-                });
-
-                server.on("everyoneMadeEstimation", function () {
-                    $('.endEstimationButton').show();
-                });
-
-                $(".endEstimationButton").click(function () {
-                    server.emit('finish-estimation');
-                })
             }
         });
 
@@ -157,6 +134,31 @@
                 activeEstimation = estimation;
             }
         });
+
+        if (isLeader) {
+            var $availableEstimations = $(".availableEstimations");
+            $availableEstimations.empty();
+            $availableEstimations.append('<li><a class="modal-trigger" href="#createEstimation">Create estimation</a></li><li class="divider" /> ');
+            $('.modal-trigger').leanModal();
+            $.each(session.estimations, function (index, estimation) {
+                $availableEstimations.append('<li class="selectable"><a href="#!">' + estimation.name + '</a></li>');
+                if (estimation.active) {
+                    activeEstimation = estimation;
+                }
+            });
+
+            $($availableEstimations.find("li.selectable")).click(function (event) {
+                server.emit('select-estimation', $(event.target).text());
+            });
+
+            server.on("everyoneMadeEstimation", function () {
+                $('.endEstimationButton').show();
+            });
+
+            $(".endEstimationButton").click(function () {
+                server.emit('finish-estimation');
+            })
+        }
 
         if (activeEstimation) {
             $("#current-estimation").text(activeEstimation.name);
