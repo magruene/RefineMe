@@ -172,15 +172,6 @@
             var isCurrentUser = user === sessionStorage.getItem('ss_user_name');
             $('#users').append(card);
             var $card = $('#card_' + user);
-            if (activeEstimation) {
-                $.each(activeEstimation.estimates, function (index, estimate) {
-                    if (estimate.user === session_username) {
-                        $($card.find("#estimationText")).html(estimate.estimation);
-                    } else {
-                        newEstimateAdded(estimate.user);
-                    }
-                });
-            }
             if (isCurrentUser) {
                 $card.addClass("active");
                 $($card.find(".card-action")).removeClass("hide");
@@ -200,6 +191,19 @@
                 $($card.find("#estimationText")).hide();
             }
         });
+
+        if (activeEstimation) {
+            $.each(activeEstimation.estimates, function (index, estimate) {
+                var user = estimate.user;
+                var $card = $('#card_' + user);
+
+                if (user === session_username) {
+                    $($card.find("#estimationText")).html(estimate.estimation);
+                } else {
+                    newEstimateAdded(user);
+                }
+            });
+        }
     }
 
     function prepareEstimationDropdown($card, user) {
