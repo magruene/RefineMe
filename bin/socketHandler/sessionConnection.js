@@ -18,6 +18,15 @@ function sessionConnection(io, socket, db, data) {
         socket.emit('prepare-session-screen', session);
         io.to(userSession.token).emit('update-view', session);
 
+        for (var i = 0; i < session.estimations.length; i++) {
+            if (session.estimations[i].active) {
+                var estimation = session.estimations[i];
+                if (estimation.estimates.length === session.users.length) {
+                    io.to(userSession.token).emit('everyoneMadeEstimation');
+                }
+            }
+        }
+
         var createEstimation = require("./createEstimation.js");
         socket.on('create-estimation', function (data) {
             createEstimation(io, userSession, db, data);
