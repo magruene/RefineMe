@@ -20,7 +20,7 @@
 
     // if the server connection is successful
     function appendInviteButton(session) {
-        $.each($("#invite-url"), function (index, element) {
+        $.each($(".invite-url"), function (index, element) {
             var $element = $(element);
             $element.empty();
             $element.append("<input type='text' class='col hide m6' value='ancient-journey-65390.herokuapp.com/login?session_token=" + session.token + "' /><button class='waves-effect waves-light btn col'>Invite members</button>");
@@ -43,7 +43,7 @@
     }
 
     if (server !== undefined) {
-        $('#leave-session').click(function (event) {
+        $('.leave-session').click(function (event) {
             server.emit('leave-session', {
                 token: sessionStorage.getItem('ss_token'),
                 user_name: sessionStorage.getItem('ss_user_name')
@@ -72,7 +72,7 @@
                 $($card.find("#estimationText")).html(estimate.estimation);
                 $($card.find("#estimationText")).show();
             });
-            $('#endEstimationButton a').hide();
+            $('.endEstimationButton a').hide();
         });
 
         server.on('prepare-session-screen', function (session) {
@@ -81,7 +81,7 @@
             $('#users').empty();
             isLeader = session.leader === sessionStorage.getItem('ss_user_name');
             if (isLeader) {
-                $('#availableEstimationsDropdown').removeClass("hide");
+                $('.availableEstimationsDropdown').removeClass("hide");
                 $(".modal-action").click(function () {
                     var estimationName = $("input[name='estimationName']").val();
                     server.emit('create-estimation', estimationName);
@@ -103,10 +103,10 @@
                 });
 
                 server.on("everyoneMadeEstimation", function () {
-                    $('#endEstimationButton a').show();
+                    $('.endEstimationButton a').show();
                 });
 
-                $("#endEstimationButton").click(function () {
+                $(".endEstimationButton").click(function () {
                     server.emit('finish-estimation');
                 })
             }

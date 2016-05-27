@@ -20,13 +20,13 @@ block content
         a.button-collapse(href='#', data-activates='slide-out')
             i.mdi-navigation-menu
         ul#nav-mobile.right.hide-on-med-and-down
-            li#endEstimationButton(style="display:none")
+            li.endEstimationButton(style="display:none")
                 a.btn(href='#!') Finish estimation
-            li#availableEstimationsDropdown.hide
+            li.availableEstimationsDropdown.hide
                 a.dropdown-button(href='#!', data-activates='availableEstimations') Available estimations
                     i.material-icons.right arrow_drop_down
             li
-                a#leave-session(href='#') Leave session
+                a.leave-session(href='#') Leave session
     .chat-app
         #overview.row
 
@@ -41,7 +41,7 @@ block content
                                 | Current estimation:&nbsp;
                                 span#current-estimation
                             div
-                                span#invite-url
+                                span.invite-url
                         .col.m6
                             #result
         #users.row
