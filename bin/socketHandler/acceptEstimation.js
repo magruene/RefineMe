@@ -32,12 +32,8 @@ function acceptEstimation (io, userSession, db, estimationValue) {
                     }
                 }, function () {
                     io.to(userSession.token).emit('alert', "The peasant called " + userSession.user_name + ", made an estimation.");
-                    io.to(userSession.token).emit('newEstimateAdded', userSession.user_name);
+                    io.to(userSession.token).emit('update-view', session);
                     console.log(estimation);
-                    if (estimation.estimates.length === session.users.length) {
-                        io.to(userSession.token).emit('everyoneMadeEstimation');
-                    }
-
                 });
             }
         }

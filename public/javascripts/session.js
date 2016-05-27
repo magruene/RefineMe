@@ -107,10 +107,6 @@
             });
         });
 
-        server.on("newEstimateAdded", function (userWhoAddedEstimate) {
-            newEstimateAdded(userWhoAddedEstimate);
-        });
-
         server.on('update-view', function (session) {
             if (!cardTemplate && !mobileMenuTemplate) {
                 $.ajax("/templates/card.html").success(function (card) {
@@ -150,10 +146,6 @@
 
             $($availableEstimations.find("li.selectable")).click(function (event) {
                 server.emit('select-estimation', $(event.target).text());
-            });
-
-            server.on("everyoneMadeEstimation", function () {
-                $('.endEstimationButton').show();
             });
 
             $(".endEstimationButton").click(function () {
@@ -203,6 +195,10 @@
 
                 newEstimateAdded(user);
             });
+
+            if (estimation.estimates.length === session.users.length) {
+                $('.endEstimationButton').show();
+            }
         }
     }
 
