@@ -31,7 +31,7 @@ function acceptEstimation (io, userSession, db, estimationValue) {
                         estimations: session.estimations
                     }
                 }, function () {
-                    io.to(userSession.token).emit('alert', "The peasant called " + userSession.user_name + ", made an estimation.");
+                    io.to(userSession.token).emit('alert', "The user " + userSession.user_name + " made an estimation.");
                     io.to(userSession.token).emit('update-view', session);
                     console.log(estimation);
                 });
