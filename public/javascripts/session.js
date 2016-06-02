@@ -185,7 +185,6 @@
             }
         });
 
-
         if (activeEstimation) {
             $.each(activeEstimation.estimates, function (index, estimate) {
                 var user = estimate.user;
