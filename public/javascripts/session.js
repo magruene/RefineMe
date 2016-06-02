@@ -173,9 +173,9 @@
             return ((aName === session_username) ? -1 : ((bName === session_username) ? 1 : 0));
         }
 
-        session.users.sort(SortByName);
+        var sort = session.users.sort(SortByName);
 
-        $.each(session.users, function (index, user) {
+        $.each(sort, function (index, user) {
             var card = cardTemplate.replace(new RegExp("{{user}}", "g"), user);
             var isCurrentUser = user === sessionStorage.getItem('ss_user_name');
             $('#users').append(card);
@@ -213,7 +213,7 @@
                 newEstimateAdded(user);
             });
 
-            if (activeEstimation.estimates.length === session.users.length && isLeader) {
+            if (activeEstimation.estimates.length === sort.length && isLeader) {
                 $('.endEstimationButton').show();
             }
         }
