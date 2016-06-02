@@ -179,8 +179,9 @@
                     prepareEstimationDropdown($card, user);
                 }
             } else {
-                $($card.find(".preloader-wrapper")).show();
                 $($card.find("#estimationText")).hide();
+                $($card.find(".card-action")).removeClass("hide");
+                $($card.find(".card-action")).css("visibility", "hidden");
             }
         });
 
