@@ -125,9 +125,9 @@
     function updateView(session) {
         $.each($("#users >div"), function (index, element) {
             var $element = $(element);
-           if (!$element.attr("id") === "card_" + session_username) {
-               $element.remove();
-           }
+            if (!$element.attr("id") === "card_" + session_username) {
+                $element.remove();
+            }
         });
 
         $('#users').empty();
@@ -167,10 +167,9 @@
         }
 
 
-
-        function SortByName(a, b){
-            var aName = a.user.toLowerCase();
-            var bName = b.user.toLowerCase();
+        function SortByName(a, b) {
+            var aName = a.toLowerCase();
+            var bName = b.toLowerCase();
             return ((aName === session_username) ? -1 : ((bName === session_username) ? 1 : 0));
         }
 
