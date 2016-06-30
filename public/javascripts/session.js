@@ -166,19 +166,20 @@
         }
 
 
-        function SortByName(a, b) {
+        function sortByName(a, b) {
             var aName = a.toLowerCase();
             var bName = b.toLowerCase();
             return ((aName === session_username) ? -1 : ((bName === session_username) ? 1 : 0));
         }
 
-        var sort = session.users.sort(SortByName);
+        var sort = session.users.sort(sortByName);
 
         $.each(sort, function (index, user) {
-            var card = cardTemplate.replace(new RegExp("{{user}}", "g"), user);
+            var card = cardTemplate.replace(new RegExp("{{user}}", "g"), escape(user));
+            card = card.replace(new RegExp("{{actual_user}}", "g"), user);
             var isCurrentUser = user === sessionStorage.getItem('ss_user_name');
             $('#users').append(card);
-            var $card = $('#card_' + user);
+            var $card = $('#card_' + escape(user));
             if (isCurrentUser) {
                 $card.addClass("active");
                 $($card.find(".card-action")).removeClass("hide");
