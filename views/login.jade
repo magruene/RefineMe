@@ -1,21 +1,34 @@
 extends layout
 
 block content
-    #chat-login-wrapper.container.row.center-align
-            h1 Welcome to RefineMe!
-            form#chat-signup.col.l6.offset-l3.s12
-                .row
-                    .input-field.col.s12
-                        input#user_name(type='text', autofocus='')
-                        label(for="user_name") First Name
-                .row
-                    .input-field.col.s12
-                        input#session_token(type='text', value=session_token, name='session_token')
-                        label(for="session_token") Session token
-                .row
-                    input#submit_button(type='button', value='Join session').waves-effect.waves-light.btn.col.s12.btn-large
-                .row
-                    input#create_button(type='button', value='Create new session').waves-effect.waves-light.btn.col.s12.btn-large
+    .section
+        main
+            center
+                img.responsive-img(style='width: 250px;', src='http://i.imgur.com/ax0NCsK.gif')
+                .section
+                h5.indigo-text Welcome to RefineMe!
+                .section
+                .container
+                    .z-depth-1.grey.lighten-4.row(style='display: inline-block; padding: 32px 48px 0px 48px; border: 1px solid #EEE;')
+                        form.col.s12(method='post')
+                            .row
+                                .col.s12
+                            .row
+                                .input-field.col.s12
+                                    input#user_name(type='text', autofocus='')
+                                    label(for="user_name") First Name
+                            .row
+                                .input-field.col.s12
+                                    input#session_token(type='text', value=session_token, name='session_token')
+                                    label(for="session_token") Session token
+                            br
+                            center
+                                .row
+                                    button#submit_button.col.s12.btn.btn-large.waves-effect.indigo(type='submit', name='btn_login') Join session
+                                .row
+                                    button#create_button.col.s12.btn.btn-large.waves-effect.indigo(type='submit', name='btn_login') Create new session
+            .section
+            .section
             // end of chat-signup form
         // end of chat-login-wrapper
     script(src='/javascripts/login.js')
