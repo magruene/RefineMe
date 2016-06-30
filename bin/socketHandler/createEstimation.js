@@ -21,7 +21,11 @@ function createEstimation(io, userSession, db, name) {
             }
         }, function () {
             io.to(userSession.token).emit('alert', "A new estimation '" + name + "' has been created!");
-            io.to(userSession.token).emit('update-view', session);
+            var updateView = {
+                type: 'ESTIMATION_CREATE',
+                session: session
+            };
+            io.to(userSession.token).emit('update-view', updateView);
         });
     });
 }

@@ -16,7 +16,11 @@ function sessionConnection(io, socket, db, data) {
         var session = res[0];
 
         socket.emit('prepare-session-screen', session);
-        io.to(userSession.token).emit('update-view', session);
+        var updateView = {
+            type: 'NEW_USER',
+            userName: userSession.user_name
+        };
+        io.to(userSession.token).emit('update-view', updateView);
 
         var createEstimation = require("./createEstimation.js");
         socket.on('create-estimation', function (data) {

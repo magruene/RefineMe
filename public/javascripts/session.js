@@ -45,9 +45,7 @@
     function newEstimateAdded(userWhoAddedEstimate) {
         var $card = $('#card_' + userWhoAddedEstimate);
         $($card.find(".preloader-wrapper")).hide();
-        if (userWhoAddedEstimate === session_username) {
-            $($card.find("#estimationDone i")).addClass("estimationText");
-        } else {
+        if (userWhoAddedEstimate !== session_username) {
             $($card.find("#estimationDone i")).addClass("estimationText-important")
         }
         $($card.find("#estimationDone")).show();
@@ -124,12 +122,11 @@
     function updateView(session) {
         $.each($("#users >div"), function (index, element) {
             var $element = $(element);
-            if (!$element.attr("id") === "card_" + session_username) {
+            if ($element.attr("id") !== "card_" + escape(session_username)) {
                 $element.remove();
             }
         });
 
-        $('#users').empty();
         $('#slide-out').empty();
         $("#slide-out").append(mobileMenuTemplate);
         appendInviteButton(session);
@@ -175,12 +172,14 @@
         var sort = session.users.sort(sortByName);
 
         $.each(sort, function (index, user) {
+            var isCurrentUser = user === sessionStorage.getItem('ss_user_name');
+            var ownCardDoesNotYetExist = $("#card_" + escape(sessionStorage.getItem('ss_user_name'))).length === 0;
             var card = cardTemplate.replace(new RegExp("{{user}}", "g"), escape(user));
             card = card.replace(new RegExp("{{actual_user}}", "g"), user);
-            var isCurrentUser = user === sessionStorage.getItem('ss_user_name');
-            $('#users').append(card);
-            var $card = $('#card_' + escape(user));
-            if (isCurrentUser) {
+
+            if (isCurrentUser && ownCardDoesNotYetExist) {
+                $('#users').append(card);
+                var $card = $('#card_' + escape(user));
                 $card.addClass("active");
                 $($card.find(".card-action")).removeClass("hide");
                 if (!estimationNumbersTemplate) {
@@ -194,7 +193,9 @@
                 } else {
                     prepareEstimationDropdown($card, user);
                 }
-            } else {
+            } else if (!isCurrentUser) {
+                $('#users').append(card);
+                var $card = $('#card_' + escape(user));
                 $($card.find("#estimationText")).hide();
                 $($card.find(".card-action")).removeClass("hide");
                 $($card.find(".card-action")).css("visibility", "hidden");

@@ -87,7 +87,11 @@ mongo.connect('mongodb://' + MONGO_USER + ':' + MONGO_PW + '@' + MONGO_BASE_URL,
                     }
                 }, function () {
                     socket.emit('redirect', 'login');
-                    socket.broadcast.to(data.token).emit('update-view', session);
+                    var updateView = {
+                        type: 'USER_LEAVE',
+                        session: session
+                    };
+                    socket.broadcast.to(data.token).emit('update-view', updateView);
                 });
             });
             console.log('user disconnected');
