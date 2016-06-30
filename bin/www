@@ -8,6 +8,13 @@ var app = require('../app');
 var debug = require('debug')('RefineMe:server');
 var http = require('http');
 var mongo = require('mongodb').MongoClient;
+
+
+/**
+ * DEV only
+ */
+require('dotenv').load();
+
 /**
  * Get port from environment and store in Express.
  */
@@ -32,7 +39,12 @@ server.listen(port, function () {
 server.on('error', onError);
 server.on('listening', onListening);
 
-mongo.connect('mongodb://admin:admin@ds019478.mlab.com:19478/refineme', function (err, db) {
+var MONGO_USER = process.env.MONGO_USER || "admin",
+    MONGO_PW = process.env.MONGO_PW || "admin",
+    MONGO_BASE_URL = process.env.MONGO_BASE_URL || "ds019478.mlab.com:19478/refineme";
+
+
+mongo.connect('mongodb://' + MONGO_USER + ':' + MONGO_PW + '@' + MONGO_BASE_URL, function (err, db) {
     if (err) throw err;
 
     console.log("Server started successfully!");
