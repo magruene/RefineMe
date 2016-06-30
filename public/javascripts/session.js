@@ -63,7 +63,7 @@
 
         server.on("estimationFinished", function (finishedEstimation) {
             $.each(finishedEstimation.estimates, function (index, estimate) {
-                var $card = $('#card_' + estimate.user);
+                var $card = $('#card_' + escape(estimate.user));
                 $($card.find("#estimationDone")).hide();
                 $($card.find("#estimationText")).html(estimate.estimation);
                 $($card.find("#estimationText")).show();
@@ -94,14 +94,13 @@
         });
 
         server.on("selectedEstimation", function (session) {
-            $.each(session.users, function (index, user) {
-                var $card = $('#card_' + user);
-                updateView(session)
+            $.each(session.users, function () {
+                updateView(session);
             });
         });
 
         server.on("newEstimateAdded", function (userWhoAddedEstimate) {
-            var $card = $('#card_' + userWhoAddedEstimate);
+            var $card = $('#card_' + escape(userWhoAddedEstimate));
             $($card.find(".preloader-wrapper")).hide();
             if (userWhoAddedEstimate === session_username) {
                 $($card.find("#estimationDone i")).addClass("estimationText");
@@ -155,10 +154,11 @@
         });
 
         $.each(session.users, function (index, user) {
-            var card = cardTemplate.replace(new RegExp("{{user}}", "g"), user);
+            var card = cardTemplate.replace(new RegExp("{{user}}", "g"), escape(user));
+            card = card.replace(new RegExp("{{actual_user}}", "g"), user);
             var isCurrentUser = user === sessionStorage.getItem('ss_user_name');
             $('#users').append(card);
-            var $card = $('#card_' + user);
+            var $card = $('#card_' + escape(user));
             if (activeEstimation) {
                 $.each(activeEstimation.estimates, function (index, estimate) {
                     if (estimate.user === session_username) {
@@ -188,7 +188,7 @@
     }
 
     function prepareEstimationDropdown($card, user) {
-        $card.append(estimationNumbersTemplate.replace(new RegExp("{{user}}", "g"), user));
+        $card.append(estimationNumbersTemplate.replace(new RegExp("{{user}}", "g"), escape(user)));
         $('.dropdown-button').dropdown({
                 inDuration: 300,
                 outDuration: 225,
@@ -197,12 +197,16 @@
             }
         );
 
-        $('#card_' + user + ' .dropdown-content li').click(function (event) {
+        $('#card_' + escape(user) + ' .dropdown-content li').click(function (event) {
             $($($(event.target).closest(".card")).find("#estimationText")).html($(this).text());
         });
-        $("#card_" + user + " #acceptEstimation").click(function (event) {
+        $("#card_" + escape(user) + " #acceptEstimation").click(function (event) {
             server.emit('accept-estimation', $($($(event.target).closest(".card")).find("#estimationText")).text());
             event.preventDefault;
         });
+    }
+
+    function escape(string) {
+        return string.replace(/\s+/g, '_');
     }
 })(window, jQuery);
