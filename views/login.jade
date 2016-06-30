@@ -2,14 +2,20 @@ extends layout
 
 block content
     #chat-login-wrapper.container.row.center-align
-        .col.l6.offset-l3.s12
             h1 Welcome to RefineMe!
-            form#chat-signup
-                input#user_name(type='text', placeholder='enter your name', autofocus='')
-                input#session_token(type='text', value=session_token, name='session_token', placeholder='enter your session token')
+            form#chat-signup.col.l6.offset-l3.s12
                 .row
-                    input#submit_button(type='button', value='Join session').waves-effect.waves-light.btn.col.l6.s12
-                    input#create_button(type='button', value='Create new session').waves-effect.waves-light.btn.col.l6.s12
+                    .input-field.col.s12
+                        input#user_name(type='text', autofocus='')
+                        label(for="user_name") First Name
+                .row
+                    .input-field.col.s12
+                        input#session_token(type='text', value=session_token, name='session_token')
+                        label(for="session_token") Session token
+                .row
+                    input#submit_button(type='button', value='Join session').waves-effect.waves-light.btn.col.s12.btn-large
+                .row
+                    input#create_button(type='button', value='Create new session').waves-effect.waves-light.btn.col.s12.btn-large
             // end of chat-signup form
         // end of chat-login-wrapper
     script(src='/javascripts/login.js')
