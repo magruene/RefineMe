@@ -25,14 +25,12 @@
                 token: session_token.val(),
                 user_name: user_name.val()
             });
-            event.preventDefault;
         });
 
         create_button.click(function (event) {
             server.emit('create_session', {
                 user_name: user_name.val()
             });
-            event.preventDefault;
         });
 
         // alert error messages returned from the server

@@ -20,26 +20,41 @@
 
     // if the server connection is successful
     function appendInviteButton(session) {
-        $("#invite-url").empty();
-        $("#invite-url").append("<input type='text' class='col hide m6' value='ancient-journey-65390.herokuapp.com/login?session_token=" + session.token + "' /><button class='waves-effect waves-light btn col'>Invite members</button>");
-        $("#invite-url button").click(function () {
-            var copyText = $('#invite-url input');
-            copyText.removeClass("hide");
-            copyText.focus();
-            copyText.select();
-            try {
-                if (document.execCommand('copy')) {
-                    Materialize.toast("Successfully copied link to clipboard!", 4000, 'rounded');
-                    copyText.addClass("hide");
+        $.each($(".invite-url"), function (index, element) {
+            var $element = $(element);
+            $element.empty();
+            $element.append("<input type='text' class='col hide m6' value='https://ancient-journey-65390.herokuapp.com/login?session_token=" + session.token + "' /><button class='waves-effect waves-light btn col'>Invite members</button>");
+            $($element.find("button")).click(function () {
+                var copyText = $($element.find("input"));
+                copyText.removeClass("hide");
+                copyText.focus();
+                copyText.select();
+                try {
+                    if (document.execCommand('copy')) {
+                        Materialize.toast("Successfully copied link to clipboard!", 4000, 'rounded');
+                        copyText.addClass("hide");
+                    }
+                } catch (err) {
+                    Materialize.toast("Wasn't able to copy link to clipboard, sorry.", 4000, 'rounded');
                 }
-            } catch (err) {
-                Materialize.toast("Wasn't able to copy link to clipboard, sorry.", 4000, 'rounded');
-            }
+            });
         });
+
+    }
+
+    function newEstimateAdded(userWhoAddedEstimate) {
+        var $card = $('#card_' + userWhoAddedEstimate);
+        $($card.find(".preloader-wrapper")).hide();
+        if (userWhoAddedEstimate === session_username) {
+            $($card.find("#estimationDone i")).addClass("estimationText");
+        } else {
+            $($card.find("#estimationDone i")).addClass("estimationText-important")
+        }
+        $($card.find("#estimationDone")).show();
     }
 
     if (server !== undefined) {
-        $('#leave-session').click(function (event) {
+        $('.leave-session').click(function (event) {
             server.emit('leave-session', {
                 token: sessionStorage.getItem('ss_token'),
                 user_name: sessionStorage.getItem('ss_user_name')
@@ -68,7 +83,7 @@
                 $($card.find("#estimationText")).html(estimate.estimation);
                 $($card.find("#estimationText")).show();
             });
-            $('#endEstimationButton').hide();
+            $('.endEstimationButton').hide();
         });
 
         server.on('prepare-session-screen', function (session) {
@@ -77,19 +92,11 @@
             $('#users').empty();
             isLeader = session.leader === sessionStorage.getItem('ss_user_name');
             if (isLeader) {
-                $('#availableEstimationsDropdown').removeClass("hide");
+                $('.availableEstimationsDropdown').removeClass("hide");
                 $(".modal-action").click(function () {
                     var estimationName = $("input[name='estimationName']").val();
                     server.emit('create-estimation', estimationName);
                 });
-
-                server.on("everyoneMadeEstimation", function () {
-                    $('#endEstimationButton').show();
-                });
-
-                $("#endEstimationButton").click(function () {
-                    server.emit('finish-estimation');
-                })
             }
         });
 
@@ -97,17 +104,6 @@
             $.each(session.users, function () {
                 updateView(session);
             });
-        });
-
-        server.on("newEstimateAdded", function (userWhoAddedEstimate) {
-            var $card = $('#card_' + escape(userWhoAddedEstimate));
-            $($card.find(".preloader-wrapper")).hide();
-            if (userWhoAddedEstimate === session_username) {
-                $($card.find("#estimationDone i")).addClass("estimationText");
-            } else {
-                $($card.find("#estimationDone i")).addClass("estimationText-important")
-            }
-            $($card.find("#estimationDone")).show();
         });
 
         server.on('update-view', function (session) {
@@ -126,22 +122,42 @@
     }
 
     function updateView(session) {
+        $.each($("#users >div"), function (index, element) {
+            var $element = $(element);
+            if (!$element.attr("id") === "card_" + session_username) {
+                $element.remove();
+            }
+        });
+
         $('#users').empty();
         $('#slide-out').empty();
         $("#slide-out").append(mobileMenuTemplate);
         appendInviteButton(session);
         $('.collapsible').collapsible();
-        var activeEstimation;
-        var $availableEstimations = $(".availableEstimations");
-        $availableEstimations.empty();
-        $availableEstimations.append('<li><a class="modal-trigger" href="#createEstimation">Create estimation</a></li><li class="divider" /> ');
-        $('.modal-trigger').leanModal();
+
         $.each(session.estimations, function (index, estimation) {
-            $availableEstimations.append('<li class="selectable"><a href="#!">' + estimation.name + '</a></li>');
             if (estimation.active) {
                 activeEstimation = estimation;
             }
         });
+
+        if (isLeader) {
+            var $availableEstimations = $(".availableEstimations");
+            $availableEstimations.empty();
+            $availableEstimations.append('<li><a class="modal-trigger" href="#createEstimation">Create estimation</a></li><li class="divider" /> ');
+            $('.modal-trigger').leanModal();
+            $.each(session.estimations, function (index, estimation) {
+                $availableEstimations.append('<li class="selectable"><a href="#!">' + estimation.name + '</a></li>');
+            });
+
+            $($availableEstimations.find("li.selectable")).click(function (event) {
+                server.emit('select-estimation', $(event.target).text());
+            });
+
+            $(".endEstimationButton").click(function () {
+                server.emit('finish-estimation');
+            })
+        }
 
         if (activeEstimation) {
             $("#current-estimation").text(activeEstimation.name);
@@ -149,23 +165,20 @@
             $("#current-estimation").text("None selected. Do so from the dropdown above!");
         }
 
-        $($availableEstimations.find("li.selectable")).click(function (event) {
-            server.emit('select-estimation', $(event.target).text());
-        });
 
-        $.each(session.users, function (index, user) {
-            var card = cardTemplate.replace(new RegExp("{{user}}", "g"), escape(user));
-            card = card.replace(new RegExp("{{actual_user}}", "g"), user);
+        function SortByName(a, b) {
+            var aName = a.toLowerCase();
+            var bName = b.toLowerCase();
+            return ((aName === session_username) ? -1 : ((bName === session_username) ? 1 : 0));
+        }
+
+        var sort = session.users.sort(SortByName);
+
+        $.each(sort, function (index, user) {
+            var card = cardTemplate.replace(new RegExp("{{user}}", "g"), user);
             var isCurrentUser = user === sessionStorage.getItem('ss_user_name');
             $('#users').append(card);
-            var $card = $('#card_' + escape(user));
-            if (activeEstimation) {
-                $.each(activeEstimation.estimates, function (index, estimate) {
-                    if (estimate.user === session_username) {
-                        $($card.find("#estimationText")).html(estimate.estimation);
-                    }
-                });
-            }
+            var $card = $('#card_' + user);
             if (isCurrentUser) {
                 $card.addClass("active");
                 $($card.find(".card-action")).removeClass("hide");
@@ -181,10 +194,28 @@
                     prepareEstimationDropdown($card, user);
                 }
             } else {
-                $($card.find(".preloader-wrapper")).show();
                 $($card.find("#estimationText")).hide();
+                $($card.find(".card-action")).removeClass("hide");
+                $($card.find(".card-action")).css("visibility", "hidden");
             }
         });
+
+        if (activeEstimation) {
+            $.each(activeEstimation.estimates, function (index, estimate) {
+                var user = estimate.user;
+                var $card = $('#card_' + user);
+
+                if (user === session_username) {
+                    $($card.find("#estimationText")).html(estimate.estimation);
+                }
+
+                newEstimateAdded(user);
+            });
+
+            if (activeEstimation.estimates.length === sort.length && isLeader) {
+                $('.endEstimationButton').show();
+            }
+        }
     }
 
     function prepareEstimationDropdown($card, user) {

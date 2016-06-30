@@ -23,7 +23,7 @@ function selectEstimation(io, userSession, db, data) {
                 estimations: session.estimations
             }
         }, function () {
-            io.to(userSession.token).emit('alert', "Behold peasants, we will now estimate: " + activeEstimation.name);
+            io.to(userSession.token).emit('alert', "Session admin has selected new story. Now active: " + activeEstimation.name);
             io.to(userSession.token).emit('selectedEstimation', session);
         });
 

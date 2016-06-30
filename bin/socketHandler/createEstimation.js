@@ -20,7 +20,7 @@ function createEstimation(io, userSession, db, name) {
                 estimations: session.estimations
             }
         }, function () {
-            io.to(userSession.token).emit('alert', "Behold peasants, a new estimation has been created");
+            io.to(userSession.token).emit('alert', "A new estimation '" + name + "' has been created!");
             io.to(userSession.token).emit('update-view', session);
         });
     });
