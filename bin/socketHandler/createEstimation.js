@@ -1,6 +1,6 @@
 function createEstimation(io, userSession, db, name) {
     var newEstimation = {
-        name : name,
+        name: name,
         estimates: []
     };
     var sessions = db.collection('sessions');
@@ -21,11 +21,7 @@ function createEstimation(io, userSession, db, name) {
             }
         }, function () {
             io.to(userSession.token).emit('alert', "A new estimation '" + name + "' has been created!");
-            var updateView = {
-                type: 'ESTIMATION_CREATE',
-                session: session
-            };
-            io.to(userSession.token).emit('update-view', updateView);
+            io.to(userSession.token).emit('update-view', session);
         });
     });
 }

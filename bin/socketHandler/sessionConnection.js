@@ -16,11 +16,7 @@ function sessionConnection(io, socket, db, data) {
         var session = res[0];
 
         socket.emit('prepare-session-screen', session);
-        var updateView = {
-            type: 'NEW_USER',
-            userName: userSession.user_name
-        };
-        io.to(userSession.token).emit('update-view', updateView);
+        io.to(userSession.token).emit('update-view', session);
 
         var createEstimation = require("./createEstimation.js");
         socket.on('create-estimation', function (data) {
@@ -29,7 +25,7 @@ function sessionConnection(io, socket, db, data) {
 
         var acceptEstimation = require("./acceptEstimation.js");
         socket.on('accept-estimation', function (data) {
-            acceptEstimation(io, userSession, db,  data);
+            acceptEstimation(io, userSession, db, data);
         });
 
         var selectEstimation = require("./selectEstimation.js");

@@ -1,4 +1,4 @@
-function acceptEstimation (io, userSession, db, estimationValue) {
+function acceptEstimation(io, userSession, db, estimationValue) {
     var sessions = db.collection('sessions');
     sessions.find({
         'token': userSession.token
@@ -33,11 +33,7 @@ function acceptEstimation (io, userSession, db, estimationValue) {
                         }
                     }, function () {
                         io.to(userSession.token).emit('alert', "The user " + userSession.user_name + " made an estimation.");
-                        var updateView = {
-                            type: 'ESTIMATION_ACCEPT',
-                            session: session
-                        };
-                        io.to(userSession.token).emit('update-view', updateView);
+                        io.to(userSession.token).emit('update-view', session);
                         console.log(estimation);
                     });
                 }
