@@ -1,1 +1,6 @@
-# RefineMe first draft
+### Installation
+
+```sh
+$ npm install
+$ npm run webpack
+```
