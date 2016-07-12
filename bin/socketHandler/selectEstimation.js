@@ -1,30 +1,30 @@
 function selectEstimation(io, userSession, db, data) {
-    var sessions = db.collection('sessions');
+    var rooms = db.collection('rooms');
 
-    sessions.find({
-        'token': userSession.token
+    rooms.find({
+        'room_name': userSession.room_name
     }).toArray(function (err, res) {
         if (err) throw err;
 
-        var session = res[0];
+        var room = res[0];
         var activeEstimation;
-        console.log(session)
-        for(var i=0; i < session.estimations.length; i++) {
-            if (session.estimations[i].name === data) {
-                session.estimations[i].active = true;
-                activeEstimation = session.estimations[i];
+        console.log(room)
+        for(var i=0; i < room.estimations.length; i++) {
+            if (room.estimations[i].name === data) {
+                room.estimations[i].active = true;
+                activeEstimation = room.estimations[i];
             } else {
-                session.estimations[i].active = false;
+                room.estimations[i].active = false;
             }
         }
 
-        sessions.update({token: session.token}, {
+        rooms.update({room_name: room.room_name}, {
             $set: {
-                estimations: session.estimations
+                estimations: room.estimations
             }
         }, function () {
-            io.to(userSession.token).emit('alert', "Session admin has selected new story. Now active: " + activeEstimation.name);
-            io.to(userSession.token).emit('selectedEstimation', session);
+            io.to(userSession.room_name).emit('alert', "Session admin has selected new story. Now active: " + activeEstimation.name);
+            io.to(userSession.room_name).emit('selectedEstimation', room);
         });
 
     });

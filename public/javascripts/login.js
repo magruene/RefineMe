@@ -1,6 +1,6 @@
 (function (global, $) {
 
-    var session_token = $('#session_token'),
+    var room_name = $('#room_name'),
         user_name = $('#user_name'),
         submit_button = $('#submit_button'),
         create_button = $('#create_button');
@@ -22,13 +22,13 @@
         submit_button.click(function (event) {
             // send the values to the server
             server.emit('join', {
-                token: session_token.val(),
+                room_name: room_name.val(),
                 user_name: user_name.val()
             });
         });
 
         create_button.click(function (event) {
-            server.emit('create_session', {
+            server.emit('create_room', {
                 user_name: user_name.val()
             });
         });
@@ -39,9 +39,9 @@
             alert(msg);
         });
 
-        server.on('store_token', function (token) {
+        server.on('store_room_name', function (room_name) {
             sessionStorage.setItem('ss_user_name', user_name.val());
-            sessionStorage.setItem('ss_token', token);
+            sessionStorage.setItem('ss_room_name', room_name);
         });
 
         server.on('redirect', function (href) {

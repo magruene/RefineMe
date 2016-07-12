@@ -1,21 +1,21 @@
 function endEstimation(io, userSession, db) {
-    var sessions = db.collection('sessions');
+    var rooms = db.collection('rooms');
     var finishedEstimation;
-    sessions.find({
-        'token': userSession.token
+    rooms.find({
+        'room_name': userSession.room_name
     }).toArray(function (err, res) {
-        var session = res[0];
-        for (var i = 0; i < session.estimations.length; i++) {
-            var estimation = session.estimations[i];
+        var room = res[0];
+        for (var i = 0; i < room.estimations.length; i++) {
+            var estimation = room.estimations[i];
             if (estimation.active) {
                 estimation.finished = true;
                 finishedEstimation = estimation;
-                sessions.update({token: session.token}, {
+                rooms.update({room_name: room.room_name}, {
                     $set: {
-                        estimations: session.estimations
+                        estimations: room.estimations
                     }
                 }, function () {
-                    io.to(userSession.token).emit('estimationFinished', finishedEstimation);
+                    io.to(userSession.room_name).emit('estimationFinished', finishedEstimation);
                 });
             }
         }

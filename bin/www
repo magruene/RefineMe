@@ -58,36 +58,36 @@ mongo.connect('mongodb://' + MONGO_USER + ':' + MONGO_PW + '@' + MONGO_BASE_URL,
             join(socket, db, data);
         });
 
-        var createSession = require("./socketHandler/createSession.js");
-        socket.on('create_session', function(data) {
-            createSession(socket, db, data);
+        var createRoom = require("./socketHandler/createRoom.js");
+        socket.on('create_room', function(data) {
+            createRoom(socket, db, data);
         });
 
-        var sessionConnection = require("./socketHandler/sessionConnection.js");
-        socket.on('session-connection', function (data) {
-            sessionConnection(io, socket, db, data);
+        var roomConnection = require("./socketHandler/roomConnection.js");
+        socket.on('room-connection', function (data) {
+            roomConnection(io, socket, db, data);
         });
 
-        socket.on('leave-session', function (data) {
-            var sessions = db.collection('sessions');
+        socket.on('leave-room', function (data) {
+            var rooms = db.collection('rooms');
 
-            sessions.find({
-                'token': data.token
+            rooms.find({
+                'room_name': data.room_name
             }).toArray(function (err, res) {
                 if (err) throw err;
-                var session = res[0];
-                var index = session.users.indexOf(data.user_name);
+                var room = res[0];
+                var index = room.users.indexOf(data.user_name);
                 if (index > -1) {
-                    session.users.splice(index, 1);
+                    room.users.splice(index, 1);
                 }
 
-                sessions.update({token: session.token}, {
+                rooms.update({room_name: room.room_name}, {
                     $set: {
-                        users: session.users
+                        users: room.users
                     }
                 }, function () {
                     socket.emit('redirect', 'login');
-                    socket.broadcast.to(data.token).emit('update-view', session);
+                    socket.broadcast.to(data.room_name).emit('update-view', room);
                 });
             });
             console.log('user disconnected');

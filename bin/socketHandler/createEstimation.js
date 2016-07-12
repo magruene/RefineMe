@@ -3,25 +3,25 @@ function createEstimation(io, userSession, db, name) {
         name: name,
         estimates: []
     };
-    var sessions = db.collection('sessions');
-    sessions.find({
-        'token': userSession.token
+    var rooms = db.collection('rooms');
+    rooms.find({
+        'room_name': userSession.room_name
     }).toArray(function (err, res) {
         if (err) throw err;
-        var session = res[0];
+        var room = res[0];
 
-        if (session.estimations === undefined) {
-            session.estimations = [newEstimation];
+        if (room.estimations === undefined) {
+            room.estimations = [newEstimation];
         } else {
-            session.estimations.push(newEstimation);
+            room.estimations.push(newEstimation);
         }
-        sessions.update({token: session.token}, {
+        rooms.update({room_name: room.room_name}, {
             $set: {
-                estimations: session.estimations
+                estimations: room.estimations
             }
         }, function () {
-            io.to(userSession.token).emit('alert', "A new estimation '" + name + "' has been created!");
-            io.to(userSession.token).emit('update-view', session);
+            io.to(userSession.room_name).emit('alert', "A new estimation '" + name + "' has been created!");
+            io.to(userSession.room_name).emit('update-view', room);
         });
     });
 }

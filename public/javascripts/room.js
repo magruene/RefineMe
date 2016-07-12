@@ -19,11 +19,11 @@
     });
 
     // if the server connection is successful
-    function appendInviteButton(session) {
+    function appendInviteButton(room) {
         $.each($(".invite-url"), function (index, element) {
             var $element = $(element);
             $element.empty();
-            $element.append("<input type='text' class='col hide m6' value='https://ancient-journey-65390.herokuapp.com/login?session_token=" + session.token + "' /><button class='waves-effect waves-light btn col'>Invite members</button>");
+            $element.append("<input type='text' class='col hide m6' value='https://ancient-journey-65390.herokuapp.com/login?room_name=" + room.room_name + "' /><button class='waves-effect waves-light btn col'>Invite members</button>");
             $($element.find("button")).click(function () {
                 var copyText = $($element.find("input"));
                 copyText.removeClass("hide");
@@ -52,16 +52,16 @@
     }
 
     if (server !== undefined) {
-        $('.leave-session').click(function (event) {
-            server.emit('leave-session', {
-                token: sessionStorage.getItem('ss_token'),
+        $('.leave-room').click(function (event) {
+            server.emit('leave-room', {
+                room_name: sessionStorage.getItem('ss_room_name'),
                 user_name: sessionStorage.getItem('ss_user_name')
             });
             event.preventDefault;
         });
 
-        server.emit('session-connection', {
-            token: sessionStorage.getItem('ss_token'),
+        server.emit('room-connection', {
+            room_name: sessionStorage.getItem('ss_room_name'),
             user_name: sessionStorage.getItem('ss_user_name')
         });
 
@@ -84,11 +84,11 @@
             $('.endEstimationButton').hide();
         });
 
-        server.on('prepare-session-screen', function (session) {
+        server.on('prepare-room-screen', function (room) {
 
-            $("#session_token").text(session.token);
+            $("#room_name").text(room.room_name);
             $('#users').empty();
-            isLeader = session.leader === sessionStorage.getItem('ss_user_name');
+            isLeader = room.leader === sessionStorage.getItem('ss_user_name');
             if (isLeader) {
                 $('.availableEstimationsDropdown').removeClass("hide");
                 $(".modal-action").click(function () {
@@ -98,28 +98,28 @@
             }
         });
 
-        server.on("selectedEstimation", function (session) {
-            $.each(session.users, function () {
-                updateView(session);
+        server.on("selectedEstimation", function (room) {
+            $.each(room.users, function () {
+                updateView(room);
             });
         });
 
-        server.on('update-view', function (session) {
+        server.on('update-view', function (room) {
             if (!cardTemplate && !mobileMenuTemplate) {
                 $.ajax("/templates/card.html").success(function (card) {
                     $.ajax("/templates/mobileMenu.html").success(function (mobileMenu) {
                         cardTemplate = card;
                         mobileMenuTemplate = mobileMenu;
-                        updateView(session);
+                        updateView(room);
                     });
                 });
             } else {
-                updateView(session);
+                updateView(room);
             }
         });
     }
 
-    function updateView(session) {
+    function updateView(room) {
         $.each($("#users >div"), function (index, element) {
             var $element = $(element);
             if ($element.attr("id") !== "card_" + escape(session_username)) {
@@ -129,10 +129,10 @@
 
         $('#slide-out').empty();
         $("#slide-out").append(mobileMenuTemplate);
-        appendInviteButton(session);
+        appendInviteButton(room);
         $('.collapsible').collapsible();
 
-        $.each(session.estimations, function (index, estimation) {
+        $.each(room.estimations, function (index, estimation) {
             if (estimation.active) {
                 activeEstimation = estimation;
             }
@@ -143,7 +143,7 @@
             $availableEstimations.empty();
             $availableEstimations.append('<li><a class="modal-trigger" href="#createEstimation">Create estimation</a></li><li class="divider" /> ');
             $('.modal-trigger').leanModal();
-            $.each(session.estimations, function (index, estimation) {
+            $.each(room.estimations, function (index, estimation) {
                 $availableEstimations.append('<li class="selectable"><a href="#!">' + estimation.name + '</a></li>');
             });
 
@@ -169,7 +169,7 @@
             return ((aName === session_username) ? -1 : ((bName === session_username) ? 1 : 0));
         }
 
-        var sort = session.users.sort(sortByName);
+        var sort = room.users.sort(sortByName);
 
         $.each(sort, function (index, user) {
             var isCurrentUser = user === sessionStorage.getItem('ss_user_name');

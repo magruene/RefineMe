@@ -26,7 +26,7 @@ block content
                 a.dropdown-button(href='#!', data-activates='availableEstimations') Available estimations
                     i.material-icons.right arrow_drop_down
             li
-                a.leave-session(href='#') Leave session
+                a.leave-room(href='#') Leave room
     .chat-app
         #overview.row
             .col.m12.s12
@@ -34,8 +34,8 @@ block content
                     .card-content.row
                         .col.m6
                             div
-                                | Session token:&nbsp;
-                                span#session_token
+                                | Room name:&nbsp;
+                                span#room_name
                             div
                                 | Current estimation:&nbsp;
                                 span#current-estimation
@@ -44,4 +44,4 @@ block content
                         .col.m6
                             #result
         #users.row
-    script(src='/javascripts/session.js')
+    script(src='/javascripts/room.js')

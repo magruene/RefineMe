@@ -1,22 +1,22 @@
-function sessionConnection(io, socket, db, data) {
+function roomConnection(io, socket, db, data) {
     console.log(data);
     var userSession = {
-        token: data.token,
+        room_name: data.room_name,
         user_name: data.user_name,
         socket: socket
     };
-    socket.join(userSession.token);
-    var sessions = db.collection('sessions');
+    socket.join(userSession.room_name);
+    var rooms = db.collection('rooms');
 
-    sessions.find({
-        'token': userSession.token
+    rooms.find({
+        'room_name': userSession.room_name
     }).toArray(function (err, res) {
         if (err) throw err;
 
-        var session = res[0];
+        var room = res[0];
 
-        socket.emit('prepare-session-screen', session);
-        io.to(userSession.token).emit('update-view', session);
+        socket.emit('prepare-room-screen', room);
+        io.to(userSession.room_name).emit('update-view', room);
 
         var createEstimation = require("./createEstimation.js");
         socket.on('create-estimation', function (data) {
@@ -40,4 +40,4 @@ function sessionConnection(io, socket, db, data) {
     })
 }
 
-module.exports = sessionConnection;
+module.exports = roomConnection;
