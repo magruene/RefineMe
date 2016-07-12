@@ -1,5 +1,4 @@
 .env
-.idea/encodings.xml
-.idea/inspectionProfiles/
-.idea/workspace.xml
+.idea/
+public/build/
 node_modules/
