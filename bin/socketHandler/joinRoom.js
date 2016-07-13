@@ -17,7 +17,8 @@ function joinRoom(socket, db, data) {
     rooms.find({'room_name': room_name}).limit(1).next((err, room) => {
         if (err) throw err;
         if (room) {
-            if (!_.contains(room.users, user_name)) {
+
+            if (!_.find(room.users, user_name)) {
                 room.users.push(user_name);
                 rooms.updateOne({room_name: room_name}, {
                     $set: {
