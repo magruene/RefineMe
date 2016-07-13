@@ -1,11 +1,11 @@
 (function (global, $) {
 
     var session_username = sessionStorage.getItem('ss_user_name');
-    var activeEstimation;
-    var isLeader;
+    var activeStory;
+    var isCreator;
     var cardTemplate;
     var mobileMenuTemplate;
-    var estimationNumbersTemplate;
+    var storyNumberTemplate;
     // attempt connection to the server
     try {
         var server = io.connect(global.location.host);
@@ -46,14 +46,14 @@
         var $card = $('#card_' + userWhoAddedEstimate);
         $($card.find(".preloader-wrapper")).hide();
         if (userWhoAddedEstimate !== session_username) {
-            $($card.find("#estimationDone i")).addClass("estimationText-important")
+            $($card.find("#estimationDone i")).addClass("storyText-important")
         }
         $($card.find("#estimationDone")).show();
     }
 
     if (server !== undefined) {
-        $('.leave-room').click(function (event) {
-            server.emit('leave-room', {
+        $('.leave_room').click(function (event) {
+            server.emit('leave_room', {
                 room_name: sessionStorage.getItem('ss_room_name'),
                 user_name: sessionStorage.getItem('ss_user_name')
             });
@@ -74,31 +74,31 @@
             window.location.assign(href);
         });
 
-        server.on("estimationFinished", function (finishedEstimation) {
-            $.each(finishedEstimation.estimates, function (index, estimate) {
+        server.on("storyFinished", function (finishedStory) {
+            $.each(finishedStory.estimates, function (index, estimate) {
                 var $card = $('#card_' + escape(estimate.user));
                 $($card.find("#estimationDone")).hide();
-                $($card.find("#estimationText")).html(estimate.estimation);
-                $($card.find("#estimationText")).show();
+                $($card.find("#storyText")).html(estimate.estimation);
+                $($card.find("#storyText")).show();
             });
-            $('.endEstimationButton').hide();
+            $('.endStoryButton').hide();
         });
 
         server.on('prepare-room-screen', function (room) {
 
             $("#room_name").text(room.room_name);
             $('#users').empty();
-            isLeader = room.leader === sessionStorage.getItem('ss_user_name');
-            if (isLeader) {
+            isCreator = room.creator === sessionStorage.getItem('ss_user_name');
+            if (isCreator) {
                 $('.availableEstimationsDropdown').removeClass("hide");
                 $(".modal-action").click(function () {
                     var estimationName = $("input[name='estimationName']").val();
-                    server.emit('create-estimation', estimationName);
+                    server.emit('create_story', estimationName);
                 });
             }
         });
 
-        server.on("selectedEstimation", function (room) {
+        server.on("selectedStory", function (room) {
             $.each(room.users, function () {
                 updateView(room);
             });
@@ -132,34 +132,34 @@
         appendInviteButton(room);
         $('.collapsible').collapsible();
 
-        $.each(room.estimations, function (index, estimation) {
-            if (estimation.active) {
-                activeEstimation = estimation;
+        $.each(room.stories, function (index, story) {
+            if (story.active) {
+                activeStory = story;
             }
         });
 
-        if (isLeader) {
+        if (isCreator) {
             var $availableEstimations = $(".availableEstimations");
             $availableEstimations.empty();
-            $availableEstimations.append('<li><a class="modal-trigger" href="#createEstimation">Create estimation</a></li><li class="divider" /> ');
+            $availableEstimations.append('<li><a class="modal-trigger" href="#createStory">Create estimation</a></li><li class="divider" /> ');
             $('.modal-trigger').leanModal();
-            $.each(room.estimations, function (index, estimation) {
-                $availableEstimations.append('<li class="selectable"><a href="#!">' + estimation.name + '</a></li>');
+            $.each(room.stories, function (index, story) {
+                $availableEstimations.append('<li class="selectable"><a href="#!">' + story.name + '</a></li>');
             });
 
             $($availableEstimations.find("li.selectable")).click(function (event) {
-                server.emit('select-estimation', $(event.target).text());
+                server.emit('select_story', $(event.target).text());
             });
 
-            $(".endEstimationButton").click(function () {
-                server.emit('finish-estimation');
+            $(".endStoryButton").click(function () {
+                server.emit('finish_story');
             })
         }
 
-        if (activeEstimation) {
-            $("#current-estimation").text(activeEstimation.name);
+        if (activeStory) {
+            $("#current-story").text(activeStory.name);
         } else {
-            $("#current-estimation").text("None selected. Do so from the dropdown above!");
+            $("#current-story").text("None selected. Do so from the dropdown above!");
         }
 
 
@@ -182,46 +182,46 @@
                 var $card = $('#card_' + escape(user));
                 $card.addClass("active");
                 $($card.find(".card-action")).removeClass("hide");
-                if (!estimationNumbersTemplate) {
+                if (!storyNumberTemplate) {
                     $.ajax({
                         url: "/templates/estimationNumbers.html",
                         async: false
                     }).success(function (data) {
-                        estimationNumbersTemplate = data;
-                        prepareEstimationDropdown($card, user);
+                        storyNumberTemplate = data;
+                        prepareStoryDropdown($card, user);
                     });
                 } else {
-                    prepareEstimationDropdown($card, user);
+                    prepareStoryDropdown($card, user);
                 }
             } else if (!isCurrentUser) {
                 $('#users').append(card);
                 var $card = $('#card_' + escape(user));
-                $($card.find("#estimationText")).hide();
+                $($card.find("#storyText")).hide();
                 $($card.find(".card-action")).removeClass("hide");
                 $($card.find(".card-action")).css("visibility", "hidden");
             }
         });
 
-        if (activeEstimation) {
-            $.each(activeEstimation.estimates, function (index, estimate) {
+        if (activeStory) {
+            $.each(activeStory.estimates, function (index, estimate) {
                 var user = estimate.user;
                 var $card = $('#card_' + user);
 
                 if (user === session_username) {
-                    $($card.find("#estimationText")).html(estimate.estimation);
+                    $($card.find("#storyText")).html(estimate.estimation);
                 }
 
                 newEstimateAdded(user);
             });
 
-            if (activeEstimation.estimates.length === sort.length && isLeader) {
-                $('.endEstimationButton').show();
+            if (activeStory.estimates.length === sort.length && isCreator) {
+                $('.endStoryButton').show();
             }
         }
     }
 
-    function prepareEstimationDropdown($card, user) {
-        $card.append(estimationNumbersTemplate.replace(new RegExp("{{user}}", "g"), escape(user)));
+    function prepareStoryDropdown($card, user) {
+        $card.append(storyNumberTemplate.replace(new RegExp("{{user}}", "g"), escape(user)));
         $('.dropdown-button').dropdown({
                 inDuration: 300,
                 outDuration: 225,
@@ -231,10 +231,10 @@
         );
 
         $('#card_' + escape(user) + ' .dropdown-content li').click(function (event) {
-            $($($(event.target).closest(".card")).find("#estimationText")).html($(this).text());
+            $($($(event.target).closest(".card")).find("#storyText")).html($(this).text());
         });
-        $("#card_" + escape(user) + " #acceptEstimation").click(function (event) {
-            server.emit('accept-estimation', $($($(event.target).closest(".card")).find("#estimationText")).text());
+        $('#card_' + escape(user) + ' #acceptStory').click(function (event) {
+            server.emit('accept_story', $($($(event.target).closest(".card")).find("#storyText")).text());
             event.preventDefault;
         });
     }

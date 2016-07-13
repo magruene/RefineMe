@@ -4,11 +4,15 @@
  * Module dependencies.
  */
 
-var app = require('../app');
-var debug = require('debug')('RefineMe:server');
-var http = require('http');
-var mongo = require('mongodb').MongoClient;
+let app = require('../app');
+let debug = require('debug')('RefineMe:server');
+let http = require('http');
+let mongo = require('mongodb').MongoClient;
 
+let joinRoom = require('./socketHandler/joinRoom.js');
+let createRoom = require('./socketHandler/createRoom.js');
+let roomConnection = require('./socketHandler/roomConnection.js');
+let leaveRoom = require('./socketHandler/leaveRoom.js');
 
 /**
  * DEV only
@@ -19,83 +23,49 @@ require('dotenv').load();
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '5000');
+let port = normalizePort(process.env.PORT || '5000');
 
 app.set('port', port);
 /**
  * Create HTTP server.
  */
 
-var server = http.createServer(app);
-var io = require('socket.io')(server);
+let server = http.createServer(app);
+let io = require('socket.io')(server);
 
 /**
  * Listen on provided port, on all network interfaces.
  */
 
 server.listen(port, function () {
-    console.log("Express server listening on port " + port)
+    console.log('Express server listening on port ' + port)
 });
 server.on('error', onError);
 server.on('listening', onListening);
 
-var MONGO_USER = process.env.MONGO_USER || "admin",
-    MONGO_PW = process.env.MONGO_PW || "admin",
-    MONGO_BASE_URL = process.env.MONGO_BASE_URL || "ds019478.mlab.com:19478/refineme";
+let MONGO_USER = process.env.MONGO_USER || 'admin',
+    MONGO_PW = process.env.MONGO_PW || 'admin',
+    MONGO_BASE_URL = process.env.MONGO_BASE_URL || 'ds019478.mlab.com:19478/refineme';
 
 
 mongo.connect('mongodb://' + MONGO_USER + ':' + MONGO_PW + '@' + MONGO_BASE_URL, function (err, db) {
     if (err) throw err;
 
-    console.log("Server started successfully!");
+    console.log('Server started successfully!');
 
     io.on('connection', function (socket) {
-        var userName;
+        let userName;
         console.log('a user connected');
 
-        var join = require("./socketHandler/join.js");
-        socket.on('join', function (data) {
-            join(socket, db, data);
-        });
+        socket.on('join_room', data => joinRoom(socket, db, data));
 
-        var createRoom = require("./socketHandler/createRoom.js");
-        socket.on('create_room', function(data) {
-            createRoom(socket, db, data);
-        });
+        socket.on('create_room', data => createRoom(socket, db, data));
 
-        var roomConnection = require("./socketHandler/roomConnection.js");
-        socket.on('room-connection', function (data) {
-            roomConnection(io, socket, db, data);
-        });
+        socket.on('room-connection', data => roomConnection(io, socket, db, data));
 
-        socket.on('leave-room', function (data) {
-            var rooms = db.collection('rooms');
+        socket.on('leave_room', data => leaveRoom(socket, db, data));
 
-            rooms.find({
-                'room_name': data.room_name
-            }).toArray(function (err, res) {
-                if (err) throw err;
-                var room = res[0];
-                var index = room.users.indexOf(data.user_name);
-                if (index > -1) {
-                    room.users.splice(index, 1);
-                }
-
-                rooms.update({room_name: room.room_name}, {
-                    $set: {
-                        users: room.users
-                    }
-                }, function () {
-                    socket.emit('redirect', 'login');
-                    socket.broadcast.to(data.room_name).emit('update-view', room);
-                });
-            });
-            console.log('user disconnected');
-        });
-
-        socket.on('disconnect', function () {
-            console.log('user ' + userName + ' disconnected');
-        });
+        socket.on('disconnect', () => console.log('user ' + userName + ' disconnected'));
     });
 });
 
@@ -104,7 +74,7 @@ mongo.connect('mongodb://' + MONGO_USER + ':' + MONGO_PW + '@' + MONGO_BASE_URL,
  */
 
 function normalizePort(val) {
-    var port = parseInt(val, 10);
+    let port = parseInt(val, 10);
 
     if (isNaN(port)) {
         // named pipe
@@ -128,7 +98,7 @@ function onError(error) {
         throw error;
     }
 
-    var bind = typeof port === 'string'
+    let bind = typeof port === 'string'
         ? 'Pipe ' + port
         : 'Port ' + port;
 
@@ -152,8 +122,8 @@ function onError(error) {
  */
 
 function onListening() {
-    var addr = server.address();
-    var bind = typeof addr === 'string'
+    let addr = server.address();
+    let bind = typeof addr === 'string'
         ? 'pipe ' + addr
         : 'port ' + addr.port;
     debug('Listening on ' + bind);

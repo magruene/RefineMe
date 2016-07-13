@@ -22,11 +22,11 @@ body {
   border-bottom: 2px solid #e91e63;
   box-shadow: none;
 }
-.estimationText {
+.storyText {
   font-size: 230px;
   line-height: 300px;
 }
-.estimationText-important {
+.storyText-important {
   font-size: 230px !important;
   line-height: 300px !important;
 }

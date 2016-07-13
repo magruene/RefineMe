@@ -1,7 +1,7 @@
 extends layout
 
 block content
-    #createEstimation.modal
+    #createStory.modal
         .modal-content
             h4 Give the estimation a name
             p e.g. the jira story (SAM-****)
@@ -11,7 +11,7 @@ block content
     // Dropdown Structure
     ul#availableEstimations.availableEstimations.dropdown-content
         li
-            a.modal-trigger(href='#createEstimation') Create estimation
+            a.modal-trigger(href='#createStory') Create estimation
         li.divider
 
     nav.nav-wrapper
@@ -20,13 +20,13 @@ block content
         a.button-collapse(href='#', data-activates='slide-out')
             i.mdi-navigation-menu
         ul#nav-mobile.right.hide-on-med-and-down
-            li.endEstimationButton(style="display:none")
+            li.endStoryButton(style="display:none")
                 a.btn(href='#!') Finish estimation
             li.availableEstimationsDropdown.hide
                 a.dropdown-button(href='#!', data-activates='availableEstimations') Available estimations
                     i.material-icons.right arrow_drop_down
             li
-                a.leave-room(href='#') Leave room
+                a.leave_room(href='#') Leave room
     .chat-app
         #overview.row
             .col.m12.s12
@@ -38,7 +38,7 @@ block content
                                 span#room_name
                             div
                                 | Current estimation:&nbsp;
-                                span#current-estimation
+                                span#current-story
                             div
                                 span.invite-url
                         .col.m6

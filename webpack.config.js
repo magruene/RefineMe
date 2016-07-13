@@ -2,10 +2,12 @@ var path = require('path');
 var webpack = require('webpack');
 
 module.exports = {
-    entry: './public/javascripts/login.js',
+    entry: {
+        'public/build/login': './public/javascripts/login',
+    },
     output: {
-        path: path.resolve(__dirname, './public/build'),
-        filename: 'login.bundle.js'
+        path: './',
+        filename: '[name].bundle.js'
     },
     module: {
         loaders: [

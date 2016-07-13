@@ -23,7 +23,7 @@ import {el} from './utils';
         // add the event listener for the login submit button
         submit_button.addEventListener('click', (event) => {
             // send the values to the server
-            server.emit('join', {
+            server.emit('join_room', {
                 room_name: room_name.value,
                 user_name: user_name.value
             });
