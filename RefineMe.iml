@@ -3,7 +3,11 @@
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$MODULE_DIR$" />
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="jquery-2.2.1" level="application" />
+    <orderEntry type="library" name="material" level="application" />
+    <orderEntry type="library" name="socket.io-1.4.5" level="application" />
     <orderEntry type="library" name="RefineMe node_modules" level="project" />
   </component>
 </module>

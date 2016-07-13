@@ -1,47 +1,75 @@
 extends layout
 
 block content
-    #createEstimation.modal
-        .modal-content
-            h4 Give the estimation a name
+    dialog#createEstimation.mdl-dialog.mdl-dialog-wide
+        h4.mdl-dialog__title Give the estimation a name
+        .mdl-dialog__content
             p e.g. the jira story (SAM-****)
-            input(name="estimationName", type="text", placeholder="Name me please")
-        .modal-footer
-            a.modal-action.modal-close.waves-effect.waves-green.btn-flat(href='#!') Create
-    // Dropdown Structure
-    ul#availableEstimations.availableEstimations.dropdown-content
-        li
-            a.modal-trigger(href='#createEstimation') Create estimation
-        li.divider
+            .mdl-grid
+                .mdl-cell--12-col.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+                    input#estimationName.mdl-textfield__input(name='estimationName', type='text', autofocus='')
+                    label.mdl-textfield__label(for='estimationName') Name
+        .mdl-dialog__actions
+            button.close.mdl-button--colored.mdl-button--raised.mdl-button(type='button') Create
 
-    nav.nav-wrapper
-        ul#slide-out.side-nav
-        a#chat-title.brand-logo(href='#') RefineMe
-        a.button-collapse(href='#', data-activates='slide-out')
-            i.mdi-navigation-menu
-        ul#nav-mobile.right.hide-on-med-and-down
-            li.endEstimationButton(style="display:none")
-                a.btn(href='#!') Finish estimation
-            li.availableEstimationsDropdown.hide
-                a.dropdown-button(href='#!', data-activates='availableEstimations') Available estimations
-                    i.material-icons.right arrow_drop_down
-            li
-                a.leave-room(href='#') Leave room
-    .chat-app
-        #overview.row
-            .col.m12.s12
-                .card
-                    .card-content.row
-                        .col.m6
-                            div
-                                | Room name:&nbsp;
-                                span#room_name
-                            div
-                                | Current estimation:&nbsp;
-                                span#current-estimation
-                            div
-                                span.invite-url
-                        .col.m6
-                            #result
-        #users.row
+    ul#availableEstimations.mdl-menu.mdl-menu--bottom-left.mdl-js-menu.mdl-js-ripple-effect(for='selectedEstimation')
+        li.mdl-menu__item Test
+
+    .mdl-layout.mdl-js-layout.mdl-layout--fixed-header
+        header.mdl-layout__header
+            .mdl-layout__header-row
+                .mdl-layout-title
+                    | RefineMe:
+                    span#room_name
+                .mdl-layout-spacer
+                nav.mdl-navigation
+                    | Current story:
+                    a#selectedEstimation.mdl-navigation__link(href='#') No story selected
+                    button#show-dialog.mdl-button--mini-fab.mdl-button.mdl-js-button.mdl-button--fab.mdl-js-ripple-effect.mdl-button--colored
+                        i.material-icons add
+
+        .mdl-layout__drawer
+            span.mdl-layout-title Acme
+            nav.mdl-navigation
+                a.mdl-navigation__link(href='#') Products
+                a.mdl-navigation__link(href='#') Services
+                a.mdl-navigation__link(href='#') Portfolios
+                a.mdl-navigation__link(href='#') Achievements
+                a.mdl-navigation__link(href='#') Blog
+
+    //Toast
+    .mdl-snackbar.mdl-js-snackbar(aria-live='assertive', aria-atomic='true', aria-relevant='text')
+        .mdl-snackbar__text
+        button.mdl-snackbar__action(type='button')
+
+    //nav.nav-wrapper
+    //    ul#slide-out.side-nav
+    //    a#chat-title.brand-logo(href='#') RefineMe
+    //    a.button-collapse(href='#', data-activates='slide-out')
+    //        i.mdi-navigation-menu
+    //    ul#nav-mobile.right.hide-on-med-and-down
+    //        li.endEstimationButton(style="display:none")
+    //            a.btn(href='#!') Finish estimation
+    //        li.availableEstimationsDropdown.hide
+    //            a.dropdown-button(href='#!', data-activates='availableEstimations') Available estimations
+    //                i.material-icons.right arrow_drop_down
+    //        li
+    //            a.leave-room(href='#') Leave room
+    //.chat-app
+    //    #overview.row
+    //        .col.m12.s12
+    //            .card
+    //                .card-content.row
+    //                    .col.m6
+    //                        div
+    //                            | Room name:&nbsp;
+    //                            span#room_name
+    //                        div
+    //                            | Current estimation:&nbsp;
+    //                            span#current-estimation
+    //                        div
+    //                            span.invite-url
+    //                    .col.m6
+    //                        #result
+    //    #users.row
     script(src='/javascripts/room.js')

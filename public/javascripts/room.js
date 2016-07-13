@@ -1,5 +1,29 @@
 (function (global, $) {
 
+    var dialog = document.querySelector('dialog');
+    var showDialogButton = document.querySelector('#show-dialog');
+    if (! dialog.showModal) {
+        dialogPolyfill.registerDialog(dialog);
+    }
+    showDialogButton.addEventListener('click', function() {
+        dialog.showModal();
+    });
+    dialog.querySelector('.close').addEventListener('click', function() {
+        var estimationName = $("input[name='estimationName']").val();
+        server.emit('create-estimation', estimationName);
+        dialog.close();
+    });
+
+    var notification = document.querySelector('.mdl-js-snackbar');
+
+    function showToast(messageToShow) {
+        notification.MaterialSnackbar.showSnackbar(
+            {
+                message: messageToShow
+            }
+        );
+    }
+
     var session_username = sessionStorage.getItem('ss_user_name');
     var activeEstimation;
     var isLeader;
@@ -31,11 +55,11 @@
                 copyText.select();
                 try {
                     if (document.execCommand('copy')) {
-                        Materialize.toast("Successfully copied link to clipboard!", 4000, 'rounded');
+                        showToast("Successfully copied link to clipboard!");
                         copyText.addClass("hide");
                     }
                 } catch (err) {
-                    Materialize.toast("Wasn't able to copy link to clipboard, sorry.", 4000, 'rounded');
+                    showToast("Wasn't able to copy link to clipboard, sorry.");
                 }
             });
         });
@@ -67,7 +91,7 @@
 
         // alert error messages returned from the server
         server.on('alert', function (msg) {
-            Materialize.toast(msg, 4000, 'rounded');
+            showToast(msg);
         });
 
         server.on('redirect', function (href) {
@@ -119,6 +143,52 @@
         });
     }
 
+    function createMenuDropdown() {
+        var menuContainer = document.createElement("div");
+        menuContainer.setAttribute("id", "menuContainer");
+        var menuButton = document.createElement("button");
+        var menu = document.createElement("ul");
+
+        menuContainer.appendChild(menuButton);
+        menuContainer.appendChild(menu);
+
+// Configure the button
+        menuButton.classList.add("mdl-button");
+        menuButton.classList.add("mdl-js-button");
+        menuButton.classList.add("mdl-button--icon");
+        menuButton.classList.add("mdl-js-ripple-effect"); // Because it's cool
+        menuButton.setAttribute("id", "myMenuButton");
+
+// Let's create the HTML that goes inside the button
+        var buttonIcon = document.createElement("i");
+        buttonIcon.classList.add("material-icons");
+        buttonIcon.appendChild(document.createTextNode("more_vert"));
+        menuButton.appendChild(buttonIcon);
+
+// Configure the menu
+        menu.classList.add("mdl-menu");
+        menu.classList.add("mdl-menu--bottom-left");
+        menu.classList.add("mdl-js-menu");
+        menu.classList.add("mdl-js-ripple-effect");
+        menu.setAttribute("for", "myMenuButton"); // Same as the ID assigned to the button
+
+// Add some menu items
+        var menuItem1 = document.createElement("li");
+        menuItem1.classList.add("mdl-menu__item");
+        menuItem1.appendChild(document.createTextNode("Some Action"));
+        menu.appendChild(menuItem1);
+
+        var menuItem2 = document.createElement("li");
+        menuItem2.classList.add("mdl-menu__item");
+        menuItem2.appendChild(document.createTextNode("Another Action"));
+        menu.appendChild(menuItem2);
+
+// Upgrade the Elements
+        componentHandler.upgradeElement(menuButton, "MaterialButton");
+        componentHandler.upgradeElement(menu, "MaterialMenu");  // This will only work if both the menu and the button are included in a container as done above.  If all goes well, and my code isn't full of bugs, the elements should correctly upgrade before being added to the DOM.
+        document.querySelectorAll('nav.mdl-navigation')[0].appendChild(menuContainer);
+    }
+
     function updateView(room) {
         $.each($("#users >div"), function (index, element) {
             var $element = $(element);
@@ -139,17 +209,17 @@
         });
 
         if (isLeader) {
-            var $availableEstimations = $(".availableEstimations");
-            $availableEstimations.empty();
-            $availableEstimations.append('<li><a class="modal-trigger" href="#createEstimation">Create estimation</a></li><li class="divider" /> ');
-            $('.modal-trigger').leanModal();
-            $.each(room.estimations, function (index, estimation) {
-                $availableEstimations.append('<li class="selectable"><a href="#!">' + estimation.name + '</a></li>');
-            });
 
-            $($availableEstimations.find("li.selectable")).click(function (event) {
-                server.emit('select-estimation', $(event.target).text());
-            });
+            $('.modal-trigger').leanModal();
+            // $.each(room.estimations, function (index, estimation) {
+            //     var listItem = document.createElement("li");
+            //     listItem.appendChild(document.createTextNode(estimation.name));
+            //     listItem.className = "mdl-menu__item";
+            //     $availableEstimations.appendChild(listItem);
+            //     componentHandler.upgradeAllRegistered();
+            // });
+
+            createMenuDropdown();
 
             $(".endEstimationButton").click(function () {
                 server.emit('finish-estimation');
@@ -157,9 +227,9 @@
         }
 
         if (activeEstimation) {
-            $("#current-estimation").text(activeEstimation.name);
+            $("#selectedEstimation").text(activeEstimation.name);
         } else {
-            $("#current-estimation").text("None selected. Do so from the dropdown above!");
+            $("#selectedEstimation").text("No story selected");
         }
 
 

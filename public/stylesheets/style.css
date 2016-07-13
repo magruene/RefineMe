@@ -1,26 +1,11 @@
-body {
-  display: flex;
-  min-height: 100vh;
-  flex-direction: column;
+.mdl-card-wide.mdl-card {
+  width: 500px;
 }
-main {
-  flex: 1 0 auto;
+.mdl-dialog.mdl-dialog-wide {
+  width: 500px;
 }
 body {
   background: #fff;
-}
-.input-field input[type=date]:focus + label,
-.input-field input[type=text]:focus + label,
-.input-field input[type=email]:focus + label,
-.input-field input[type=password]:focus + label {
-  color: #e91e63;
-}
-.input-field input[type=date]:focus,
-.input-field input[type=text]:focus,
-.input-field input[type=email]:focus,
-.input-field input[type=password]:focus {
-  border-bottom: 2px solid #e91e63;
-  box-shadow: none;
 }
 .estimationText {
   font-size: 230px;
@@ -34,4 +19,12 @@ body {
   width: 250px;
   height: 250px;
   margin-top: 25px;
+}
+.login.mdl-layout {
+  align-items: center;
+  justify-content: center;
+}
+.login.mdl-layout__content {
+  padding: 24px;
+  flex: none;
 }
