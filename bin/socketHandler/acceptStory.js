@@ -1,7 +1,6 @@
-function acceptStory(io, userSession, db, estimationValue) {
-    let rooms = db.collection('rooms');
-    
-    rooms.find({'room_name' : userSession.room_name}).limit(1).next((err, room) => {
+function acceptStory(io, userSession, repo, estimationValue) {
+
+    repo.find({'room_name': userSession.room_name}, (err, room) => {
         if (err) throw err;
 
         let singleEstimation = {
@@ -26,15 +25,13 @@ function acceptStory(io, userSession, db, estimationValue) {
                         story.estimates.push(singleEstimation);
                     }
 
-                    rooms.updateOne({room_name: room.room_name}, {
-                        $set: {
-                            stories: room.stories
-                        }
-                    }, () => {
-                        io.to(userSession.room_name).emit('alert', "The user " + userSession.user_name + " made an estimation.");
-                        io.to(userSession.room_name).emit('update-view', room);
-                        console.log(story);
-                    });
+                    repo.update({room_name: room.room_name},
+                        {stories: room.stories},
+                        () => {
+                            io.to(userSession.room_name).emit('alert', "The user " + userSession.user_name + " made an estimation.");
+                            io.to(userSession.room_name).emit('update-view', room);
+                            console.log(story);
+                        });
                 }
             }
         }

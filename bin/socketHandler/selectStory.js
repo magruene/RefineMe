@@ -1,8 +1,7 @@
-function selectStory(io, userSession, db, data) {
-    let rooms = db.collection('rooms');
-    rooms.find({'room_name': userSession.room_name}).limit(1).next((err, room) => {
+function selectStory(io, userSession, repo, data) {
+    repo.find({'room_name': userSession.room_name}, (err, room) => {
         let activeStory;
-        for(let i=0; i < room.stories.length; i++) {
+        for (let i = 0; i < room.stories.length; i++) {
             if (room.stories[i].name === data) {
                 room.stories[i].active = true;
                 activeStory = room.stories[i];
@@ -11,14 +10,12 @@ function selectStory(io, userSession, db, data) {
             }
         }
 
-        rooms.updateOne({room_name: room.room_name}, {
-            $set: {
-                stories: room.stories
-            }
-        }, () => {
-            io.to(userSession.room_name).emit('alert', "Session admin has selected new story. Now active: " + activeStory.name);
-            io.to(userSession.room_name).emit('selectedStory', room);
-        });
+        repo.update({room_name: room.room_name},
+            {stories: room.stories},
+            () => {
+                io.to(userSession.room_name).emit('alert', "Session admin has selected new story. Now active: " + activeStory.name);
+                io.to(userSession.room_name).emit('selectedStory', room);
+            });
 
     });
 }

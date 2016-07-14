@@ -1,12 +1,11 @@
-function createRoom(socket, db, data) {
+function createRoom(socket, repo, data) {
     let user_name = data.user_name;
 
     if (user_name === '') {
         socket.emit('alert', 'Please give me your name so I may use it for personalized advertisement');
     } else {
-        let rooms = db.collection('rooms');
         let newRoomName = generateRoomName();
-        rooms.insertOne({
+        repo.add({
             room_name: newRoomName,
             creator: user_name,
             users: [user_name]

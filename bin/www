@@ -7,7 +7,7 @@
 let app = require('../app');
 let debug = require('debug')('RefineMe:server');
 let http = require('http');
-let mongo = require('mongodb').MongoClient;
+let Repository = require('./Repository').Repository;
 
 let joinRoom = require('./socketHandler/joinRoom.js');
 let createRoom = require('./socketHandler/createRoom.js');
@@ -47,27 +47,44 @@ let MONGO_USER = process.env.MONGO_USER || 'admin',
     MONGO_PW = process.env.MONGO_PW || 'admin',
     MONGO_BASE_URL = process.env.MONGO_BASE_URL || 'ds019478.mlab.com:19478/refineme';
 
+let repo = new Repository('mongodb://' + MONGO_USER + ':' + MONGO_PW + '@' + MONGO_BASE_URL, 'rooms');
 
-mongo.connect('mongodb://' + MONGO_USER + ':' + MONGO_PW + '@' + MONGO_BASE_URL, function (err, db) {
-    if (err) throw err;
+io.on('connection', function (socket) {
+    let userName;
+    console.log('a user connected');
 
-    console.log('Server started successfully!');
+    socket.on('join_room', data => joinRoom(socket, repo, data));
 
-    io.on('connection', function (socket) {
-        let userName;
-        console.log('a user connected');
+    socket.on('create_room', data => createRoom(socket, repo, data));
 
-        socket.on('join_room', data => joinRoom(socket, db, data));
+    socket.on('room-connection', data => roomConnection(io, socket, repo, data));
 
-        socket.on('create_room', data => createRoom(socket, db, data));
+    socket.on('leave_room', data => leaveRoom(socket, repo, data));
 
-        socket.on('room-connection', data => roomConnection(io, socket, db, data));
-
-        socket.on('leave_room', data => leaveRoom(socket, db, data));
-
-        socket.on('disconnect', () => console.log('user ' + userName + ' disconnected'));
-    });
+    socket.on('disconnect', () => console.log('user ' + userName + ' disconnected'));
 });
+
+
+// mongo.connect('mongodb://' + MONGO_USER + ':' + MONGO_PW + '@' + MONGO_BASE_URL, function (err, db) {
+//     if (err) throw err;
+//
+//     console.log('Server started successfully!');
+//
+//     io.on('connection', function (socket) {
+//         let userName;
+//         console.log('a user connected');
+//
+//         socket.on('join_room', data => joinRoom(socket, db, data));
+//
+//         socket.on('create_room', data => createRoom(socket, db, data));
+//
+//         socket.on('room-connection', data => roomConnection(io, socket, db, data));
+//
+//         socket.on('leave_room', data => leaveRoom(socket, db, data));
+//
+//         socket.on('disconnect', () => console.log('user ' + userName + ' disconnected'));
+//     });
+// });
 
 /**
  * Normalize a port into a number, string, or false.

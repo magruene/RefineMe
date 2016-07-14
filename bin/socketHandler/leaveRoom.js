@@ -1,7 +1,6 @@
-function leaveRoom(socket, db, data) {
-    let rooms = db.collection('rooms');
+function leaveRoom(socket, repo, data) {
 
-    rooms.find({'room_name' : data.room_name}).limit(1).next((err, room) => {
+    repo.find({'room_name': data.room_name}, (err, room) => {
         if (err) throw err;
 
         let index = room.users.indexOf(data.user_name);
@@ -9,14 +8,12 @@ function leaveRoom(socket, db, data) {
             room.users.splice(index, 1);
         }
 
-        rooms.updateOne({room_name: room.room_name}, {
-            $set: {
-                users: room.users
-            }
-        }, () => {
-            socket.emit('redirect', 'login');
-            socket.broadcast.to(data.room_name).emit('update-view', room);
-        });
+        repo.update({room_name: room.room_name},
+            {users: room.users},
+            () => {
+                socket.emit('redirect', 'login');
+                socket.broadcast.to(data.room_name).emit('update-view', room);
+            });
     });
     console.log('user disconnected');
 }
