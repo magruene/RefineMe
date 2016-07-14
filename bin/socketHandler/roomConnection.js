@@ -2,7 +2,7 @@ function roomConnection(io, socket, repo, data) {
     
     console.log(data);
     
-    var userSession = {
+    let userSession = {
         room_name: data.room_name,
         user_name: data.user_name,
         socket: socket
