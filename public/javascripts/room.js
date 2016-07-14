@@ -1,5 +1,6 @@
 import {el} from './utils';
 import * as header from './header';
+import * as menu from './menu';
 
 (function (global, $) {
 
@@ -20,6 +21,7 @@ import * as header from './header';
     } catch (e) {
         alert('Sorry, we couldn\'t connect. Please try again later \n\n' + e);
     }
+    init();
 
     // if the server connection is successful
     function appendInviteButton(room) {
@@ -87,6 +89,7 @@ import * as header from './header';
         });
 
         server.on('prepare-room-screen', function (room) {
+            menu.init(server, room);
             sessionStorage.setItem('ss_room', room);
             $("#room_name").text(room.room_name);
             $('#users').empty();

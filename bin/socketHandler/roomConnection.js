@@ -23,7 +23,7 @@ function roomConnection(io, socket, repo, data) {
             createStory(userSession.room_name, repo, storyName,
                 (actualRoom) => {
                     io.to(userSession.room_name).emit('alert', "A new story '" + storyName + "' has been created!");
-                    io.to(userSession.room_name).emit('update-view', actualRoom);
+                    io.to(userSession.room_name).emit('storyCreated', actualRoom);
                 });
         });
 
