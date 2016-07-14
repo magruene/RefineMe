@@ -1,31 +1,34 @@
+import {el} from './utils';
+import * as header from './header';
+
 (function (global, $) {
 
-    var session_username = sessionStorage.getItem('ss_user_name');
-    var activeStory;
-    var isCreator;
-    var cardTemplate;
-    var mobileMenuTemplate;
-    var storyNumberTemplate;
+    function init() {
+        header.init();
+    }
+
+    let session_username = sessionStorage.getItem('ss_user_name');
+    let activeStory;
+    let isCreator;
+    let cardTemplate;
+    let mobileMenuTemplate;
+    let storyNumberTemplate;
+    let server;
     // attempt connection to the server
     try {
-        var server = io.connect(global.location.host);
+        server = io.connect(global.location.host);
     } catch (e) {
         alert('Sorry, we couldn\'t connect. Please try again later \n\n' + e);
     }
 
-    $(".button-collapse").sideNav({
-        menuWidth: 240, // Default is 240
-        closeOnClick: true // Closes side-nav on <a> clicks, useful for Angular/Meteor
-    });
-
     // if the server connection is successful
     function appendInviteButton(room) {
         $.each($(".invite-url"), function (index, element) {
-            var $element = $(element);
+            let $element = $(element);
             $element.empty();
             $element.append("<input type='text' class='col hide m6' value='https://ancient-journey-65390.herokuapp.com/login?room_name=" + room.room_name + "' /><button class='waves-effect waves-light btn col'>Invite members</button>");
             $($element.find("button")).click(function () {
-                var copyText = $($element.find("input"));
+                let copyText = $($element.find("input"));
                 copyText.removeClass("hide");
                 copyText.focus();
                 copyText.select();
@@ -43,7 +46,7 @@
     }
 
     function newEstimateAdded(userWhoAddedEstimate) {
-        var $card = $('#card_' + userWhoAddedEstimate);
+        let $card = $('#card_' + userWhoAddedEstimate);
         $($card.find(".preloader-wrapper")).hide();
         if (userWhoAddedEstimate !== session_username) {
             $($card.find("#estimationDone i")).addClass("storyText-important")
@@ -76,32 +79,29 @@
 
         server.on("storyFinished", function (finishedStory) {
             $.each(finishedStory.estimates, function (index, estimate) {
-                var $card = $('#card_' + escape(estimate.user));
+                let $card = $('#card_' + escape(estimate.user));
                 $($card.find("#estimationDone")).hide();
                 $($card.find("#storyText")).html(estimate.estimation);
                 $($card.find("#storyText")).show();
             });
-            $('.endStoryButton').hide();
         });
 
         server.on('prepare-room-screen', function (room) {
-
+            sessionStorage.setItem('ss_room', room);
             $("#room_name").text(room.room_name);
             $('#users').empty();
             isCreator = room.creator === sessionStorage.getItem('ss_user_name');
             if (isCreator) {
                 $('.availableEstimationsDropdown').removeClass("hide");
                 $(".modal-action").click(function () {
-                    var estimationName = $("input[name='estimationName']").val();
+                    let estimationName = $("input[name='estimationName']").val();
                     server.emit('create_story', estimationName);
                 });
             }
         });
 
         server.on("selectedStory", function (room) {
-            $.each(room.users, function () {
-                updateView(room);
-            });
+            updateView(room);
         });
 
         server.on('update-view', function (room) {
@@ -121,7 +121,7 @@
 
     function updateView(room) {
         $.each($("#users >div"), function (index, element) {
-            var $element = $(element);
+            let $element = $(element);
             if ($element.attr("id") !== "card_" + escape(session_username)) {
                 $element.remove();
             }
@@ -139,7 +139,7 @@
         });
 
         if (isCreator) {
-            var $availableEstimations = $(".availableEstimations");
+            let $availableEstimations = $(".availableEstimations");
             $availableEstimations.empty();
             $availableEstimations.append('<li><a class="modal-trigger" href="#createStory">Create estimation</a></li><li class="divider" /> ');
             $('.modal-trigger').leanModal();
@@ -164,22 +164,22 @@
 
 
         function sortByName(a, b) {
-            var aName = a.toLowerCase();
-            var bName = b.toLowerCase();
+            let aName = a.toLowerCase();
+            let bName = b.toLowerCase();
             return ((aName === session_username) ? -1 : ((bName === session_username) ? 1 : 0));
         }
 
-        var sort = room.users.sort(sortByName);
+        let sort = room.users.sort(sortByName);
 
         $.each(sort, function (index, user) {
-            var isCurrentUser = user === sessionStorage.getItem('ss_user_name');
-            var ownCardDoesNotYetExist = $("#card_" + escape(sessionStorage.getItem('ss_user_name'))).length === 0;
-            var card = cardTemplate.replace(new RegExp("{{user}}", "g"), escape(user));
+            let isCurrentUser = user === sessionStorage.getItem('ss_user_name');
+            let ownCardDoesNotYetExist = $("#card_" + escape(sessionStorage.getItem('ss_user_name'))).length === 0;
+            let card = cardTemplate.replace(new RegExp("{{user}}", "g"), escape(user));
             card = card.replace(new RegExp("{{actual_user}}", "g"), user);
 
             if (isCurrentUser && ownCardDoesNotYetExist) {
                 $('#users').append(card);
-                var $card = $('#card_' + escape(user));
+                let $card = $('#card_' + escape(user));
                 $card.addClass("active");
                 $($card.find(".card-action")).removeClass("hide");
                 if (!storyNumberTemplate) {
@@ -195,7 +195,7 @@
                 }
             } else if (!isCurrentUser) {
                 $('#users').append(card);
-                var $card = $('#card_' + escape(user));
+                let $card = $('#card_' + escape(user));
                 $($card.find("#storyText")).hide();
                 $($card.find(".card-action")).removeClass("hide");
                 $($card.find(".card-action")).css("visibility", "hidden");
@@ -204,8 +204,8 @@
 
         if (activeStory) {
             $.each(activeStory.estimates, function (index, estimate) {
-                var user = estimate.user;
-                var $card = $('#card_' + user);
+                let user = estimate.user;
+                let $card = $('#card_' + user);
 
                 if (user === session_username) {
                     $($card.find("#storyText")).html(estimate.estimation);
@@ -213,10 +213,6 @@
 
                 newEstimateAdded(user);
             });
-
-            if (activeStory.estimates.length === sort.length && isCreator) {
-                $('.endStoryButton').show();
-            }
         }
     }
 

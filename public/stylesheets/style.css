@@ -9,6 +9,18 @@ main {
 body {
   background: #fff;
 }
+header,
+main,
+footer {
+  padding-left: 240px;
+}
+@media only screen and (max-width : 992px) {
+  header,
+  main,
+  footer {
+    padding-left: 0;
+  }
+}
 .input-field input[type=date]:focus + label,
 .input-field input[type=text]:focus + label,
 .input-field input[type=email]:focus + label,

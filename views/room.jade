@@ -11,37 +11,35 @@ block content
     // Dropdown Structure
     ul#availableEstimations.availableEstimations.dropdown-content
         li
-            a.modal-trigger(href='#createStory') Create estimation
+            a.modal-trigger(href='#createStory') Create story
         li.divider
 
+    //header-content
     nav.nav-wrapper
-        ul#slide-out.side-nav
-        a#chat-title.brand-logo(href='#') RefineMe
         a.button-collapse(href='#', data-activates='slide-out')
             i.mdi-navigation-menu
+        a#chat-title.brand-logo(href='#', style="padding-left: 10px;") RefineMe
         ul#nav-mobile.right.hide-on-med-and-down
-            li.endStoryButton(style="display:none")
+            li.endStoryButton
                 a.btn(href='#!') Finish estimation
-            li.availableEstimationsDropdown.hide
-                a.dropdown-button(href='#!', data-activates='availableEstimations') Available estimations
-                    i.material-icons.right arrow_drop_down
             li
-                a.leave_room(href='#') Leave room
-    .chat-app
-        #overview.row
-            .col.m12.s12
-                .card
-                    .card-content.row
-                        .col.m6
-                            div
-                                | Room name:&nbsp;
-                                span#room_name
-                            div
-                                | Current estimation:&nbsp;
-                                span#current-story
-                            div
-                                span.invite-url
-                        .col.m6
-                            #result
-        #users.row
-    script(src='/javascripts/room.js')
+                a.leave_room(href='#', title="Leave")
+                    i.mdi-action-exit-to-app
+    //menu
+    ul#slide-out.side-nav.fixed(style="margin-top: 64px;")
+        .row(style="padding-top: 15px;")
+            .input-field.col.s8
+                input#storyName(type='text', style="color: black;")
+                label(for='storyName') Story name
+            .col.s4.valign-wrapper
+                button.valign.btn-floating.btn-large.waves-effect.waves-light.red
+                    i.mdi-content-add
+        li.divider
+        #availableStories
+            li Story name
+
+    // main-container
+    main
+        .chat-app(style="padding-right: 100px;")
+            #users.row
+    script(src='build/room.bundle.js')

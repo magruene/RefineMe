@@ -4,6 +4,7 @@ var webpack = require('webpack');
 module.exports = {
     entry: {
         'public/build/login': './public/javascripts/login',
+        'public/build/room': './public/javascripts/room'
     },
     output: {
         path: './',

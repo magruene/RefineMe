@@ -32,3 +32,20 @@ export function toggleClass(element, className) {
 export function isString (input) {
     return typeof input === 'string' || input instanceof String;
 }
+
+export function ajaxGet(url, successFunc, errorFunc) {
+    var request = new XMLHttpRequest();
+    request.open('GET', url, true);
+
+    request.onload = function() {
+        if (request.status >= 200 && request.status < 400) {
+            successFunc();
+        } else {
+            errorFunc();
+        }
+    };
+
+    request.onerror = errorFunc;
+
+    request.send();
+}
