@@ -1,6 +1,7 @@
-function endStory(io, userSession, repo) {
+function endStory(roomName, repo, callback) {
+    
     let finishedStory;
-    repo.find({'room_name': userSession.room_name}, (err, room) => {
+    repo.find({'room_name': roomName}, (err, room) => {
         if (err) throw err;
 
         for (let i = 0; i < room.stories.length; i++) {
@@ -10,8 +11,9 @@ function endStory(io, userSession, repo) {
                 finishedStory = story;
                 repo.update({room_name: room.room_name},
                     {stories: room.stories},
-                    () => {
-                        io.to(userSession.room_name).emit('storyFinished', finishedStory);
+                    (err) => {
+                        if (err) throw err;
+                        callback(finishedStory)
                     });
             }
         }

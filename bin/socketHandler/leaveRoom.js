@@ -1,4 +1,4 @@
-function leaveRoom(socket, repo, data) {
+function leaveRoom(repo, data, callback) {
 
     repo.find({'room_name': data.room_name}, (err, room) => {
         if (err) throw err;
@@ -10,9 +10,9 @@ function leaveRoom(socket, repo, data) {
 
         repo.update({room_name: room.room_name},
             {users: room.users},
-            () => {
-                socket.emit('redirect', 'login');
-                socket.broadcast.to(data.room_name).emit('update-view', room);
+            (err) => {
+                if(err) throw err;
+                callback('redirect', 'login', room);
             });
     });
     console.log('user disconnected');

@@ -1,5 +1,8 @@
-function selectStory(io, userSession, repo, data) {
-    repo.find({'room_name': userSession.room_name}, (err, room) => {
+function selectStory(roomName, repo, data, callback) {
+    
+    repo.find({'room_name': roomName}, (err, room) => {
+        if (err) throw err;
+
         let activeStory;
         for (let i = 0; i < room.stories.length; i++) {
             if (room.stories[i].name === data) {
@@ -12,11 +15,10 @@ function selectStory(io, userSession, repo, data) {
 
         repo.update({room_name: room.room_name},
             {stories: room.stories},
-            () => {
-                io.to(userSession.room_name).emit('alert', "Session admin has selected new story. Now active: " + activeStory.name);
-                io.to(userSession.room_name).emit('selectedStory', room);
+            (err) => {
+                if (err) throw err;
+                callback(room, activeStory)
             });
-
     });
 }
 

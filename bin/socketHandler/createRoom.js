@@ -1,19 +1,20 @@
-function createRoom(socket, repo, data) {
+function createRoom(repo, data, callback) {
+    
     let user_name = data.user_name;
 
     if (user_name === '') {
-        socket.emit('alert', 'Please give me your name so I may use it for personalized advertisement');
+        callback('alert', 'Please give me your name so I may use it for personalized advertisement');
     } else {
         let newRoomName = generateRoomName();
         repo.add({
             room_name: newRoomName,
             creator: user_name,
             users: [user_name]
-        }, (err) => {
+        }, (err, result) => {
             if(err) throw err;
             // after inserting new session to db, redirect to session
-            socket.emit('store_room_name', newRoomName);
-            socket.emit('redirect', 'room');
+            callback('store_room_name', newRoomName);
+            callback('redirect', 'room');
         });
     }
 }

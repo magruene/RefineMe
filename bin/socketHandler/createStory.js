@@ -1,22 +1,27 @@
-function createStory(io, userSession, repo, name) {
+function createStory(roomName, repo, storyName, callback) {
+
     let newStory = {
-        name: name,
+        name: storyName,
         estimates: []
     };
-    repo.find({'room_name': userSession.room_name}, (err, room) => {
+
+    repo.find({'room_name': roomName}, (err, room) => {
         if (err) throw err;
 
         if (room.stories === undefined) {
             room.stories = [newStory];
         } else {
             room.stories.push(newStory);
+            room.stories.push(newStory);
         }
+
         repo.update({room_name: room.room_name},
             {stories: room.stories},
-            () => {
-                io.to(userSession.room_name).emit('alert', "A new story '" + name + "' has been created!");
-                io.to(userSession.room_name).emit('update-view', room);
-            });
+            (err) => {
+                if (err) throw err;
+                callback(room)
+            }
+        );
     });
 }
 

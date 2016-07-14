@@ -1,4 +1,4 @@
-function acceptStory(io, userSession, repo, estimationValue) {
+function acceptStory(userSession, repo, estimationValue, callback) {
 
     repo.find({'room_name': userSession.room_name}, (err, room) => {
         if (err) throw err;
@@ -7,6 +7,7 @@ function acceptStory(io, userSession, repo, estimationValue) {
             user: userSession.user_name,
             estimation: estimationValue
         };
+        
         if (room.stories) {
             for (let i = 0; i < room.stories.length; i++) {
                 if (room.stories[i].active) {
@@ -27,15 +28,13 @@ function acceptStory(io, userSession, repo, estimationValue) {
 
                     repo.update({room_name: room.room_name},
                         {stories: room.stories},
-                        () => {
-                            io.to(userSession.room_name).emit('alert', "The user " + userSession.user_name + " made an estimation.");
-                            io.to(userSession.room_name).emit('update-view', room);
-                            console.log(story);
+                        (err) => {
+                            if (err) throw err;
+                            callback(room)
                         });
                 }
             }
         }
-
     });
 }
 
