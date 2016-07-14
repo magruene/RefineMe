@@ -12,7 +12,6 @@ function createStory(roomName, repo, storyName, callback) {
             room.stories = [newStory];
         } else {
             room.stories.push(newStory);
-            room.stories.push(newStory);
         }
 
         repo.update({room_name: room.room_name},
