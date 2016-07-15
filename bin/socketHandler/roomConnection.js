@@ -40,7 +40,7 @@ function roomConnection(io, socket, repo, data) {
         socket.on('select_story', (data) => {
             selectStory(userSession.room_name, repo, data,
                 (actualRoom, activeStory) => {
-                    io.to(userSession.room_name).emit('alert', "Session admin has selected new story. Now active: " + activeStory.name);
+                    io.to(userSession.room_name).emit('alert', "New story selected: " + activeStory.name);
                     io.to(userSession.room_name).emit('selectedStory', actualRoom);
                 });
         });
