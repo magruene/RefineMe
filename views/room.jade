@@ -30,7 +30,7 @@ block content
         .row(style="padding-top: 15px;")
             .input-field.col.s8
                 input#storyName(type='text', style="color: black;")
-                label(for='storyName') Story name
+                label#storyNameLabel(for='storyName', data-error='a story has no name') Story name
             .col.s4.valign-wrapper
                 #add-button.button.valign.btn-floating.btn-large.waves-effect.waves-light.red
                     i.mdi-content-add

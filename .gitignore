@@ -3,3 +3,4 @@
 public/build/
 node_modules/
 *.iml
+public/stylesheets/style.css
