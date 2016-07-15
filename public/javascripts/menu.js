@@ -31,7 +31,7 @@ export function init(server, room) {
             let availableStories = el('#availableStories')[0];
             availableStories.innerHTML = '';
 
-            for (let story of room.stories) {
+            for (let story of room.stories.reverse()) {
                 let storyElement = document.createElement('li');
                 let buttonElement = document.createElement('a');
 
