@@ -16,7 +16,7 @@ function roomConnection(io, socket, repo, data) {
         if (err) throw err;
 
         socket.emit('prepare-room-screen', room);
-        io.to(userSession.room_name).emit('update-view', room);
+        io.to(userSession.room_name).emit('update-table', room);
 
         let createStory = require("./createStory.js");
         socket.on('create_story', (storyName) => {
@@ -32,7 +32,7 @@ function roomConnection(io, socket, repo, data) {
             acceptStory(userSession, repo, data,
                 (actualRoom) => {
                     io.to(userSession.room_name).emit('alert', "The user " + userSession.user_name + " made an estimation.");
-                    io.to(userSession.room_name).emit('update-view', actualRoom);
+                    io.to(userSession.room_name).emit('update-table', actualRoom);
                 });
         });
 

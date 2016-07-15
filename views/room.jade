@@ -15,7 +15,7 @@ block content
         li.divider
 
     //header-content
-    nav.nav-wrapper
+    nav.nav-wrapper.grey.lighten-1
         a.button-collapse(href='#', data-activates='slide-out')
             i.mdi-navigation-menu
         a#chat-title.brand-logo(href='#', style="padding-left: 10px;") RefineMe
@@ -26,7 +26,7 @@ block content
                 a.leave_room(href='#', title="Leave")
                     i.mdi-action-exit-to-app
     //menu
-    ul#slide-out.side-nav.fixed(style="margin-top: 64px;")
+    ul#slide-out.grey.lighten-3.side-nav.fixed(style="margin-top: 64px;")
         .row(style="padding-top: 15px;")
             .input-field.col.s8
                 input#storyName(type='text', style="color: black;")
@@ -39,6 +39,6 @@ block content
 
     // main-container
     main
-        .chat-app(style="padding-right: 100px;")
+        .chat-app
             #users.row
     script(src='build/room.bundle.js')

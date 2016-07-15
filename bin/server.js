@@ -68,7 +68,7 @@ io.on('connection', function (socket) {
     socket.on('leave_room', data => leaveRoom(repo, data,
         (eventName, value, room) => {
             socket.emit(eventName, value);
-            socket.broadcast.to(data.room_name).emit('update-view', room);
+            socket.broadcast.to(data.room_name).emit('update-table', room);
         }));
 
     socket.on('disconnect', () => console.log('user ' + userName + ' disconnected'));

@@ -1,10 +1,10 @@
 import {el} from './utils';
 
 (function (global) {
-    let room_name = el('#room_name'),
-        user_name = el('#user_name'),
-        submit_button = el('#submit_button'),
-        create_button = el('#create_button'),
+    let room_name = el('#room_name')[0],
+        user_name = el('#user_name')[0],
+        submit_button = el('#submit_button')[0],
+        create_button = el('#create_button')[0],
         server;
 
     // attempt to establish a connection to the server
