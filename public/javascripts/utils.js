@@ -13,9 +13,7 @@ export function childEl(parentElement, selector) {
     if (elements.length === 0) {
         return null;
     }
-    if (elements.length === 1) {
-        return elements[0];
-    }
+    
     return elements;
 }
 

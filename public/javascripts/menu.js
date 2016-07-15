@@ -1,8 +1,8 @@
 import {el, childEl} from './utils';
 
-let addButton = el('#add-button');
-let storyNameInput = el('#storyName');
-let storyNameLabel = el('#storyNameLabel');
+let addButton = el('#add-button')[0];
+let storyNameInput = el('#storyName')[0];
+let storyNameLabel = el('#storyNameLabel')[0];
 
 export function init(server, room) {
     addButton.addEventListener('click', (event) => {
@@ -28,7 +28,7 @@ export function init(server, room) {
 
     function createStoryList(room) {
         if (room.stories) {
-            let availableStories = el('#availableStories');
+            let availableStories = el('#availableStories')[0];
             availableStories.innerHTML = '';
 
             for (let story of room.stories) {
@@ -39,15 +39,13 @@ export function init(server, room) {
                 buttonElement.classList = 'waves-effect waves-teal';
                 buttonElement.addEventListener('click', (event) => {
                     let elements = childEl(availableStories, 'li');
-                    if( Object.prototype.toString.call( elements ) === '[object Array]') {
-                        for (let storyElement1 of elements) {
-                            storyElement1.classList = 'bold';
-                        }
-                    } else {
-                        elements.classList = 'bold';
+                    for (let storyElement1 of elements) {
+                        storyElement1.classList = 'bold';
                     }
                     storyElement.classList = '';
                     storyElement.classList = 'bold active';
+
+                    server.emit('select_story', event.target.textContent);
                 });
                 storyElement.classList = 'bold';
                 storyElement.appendChild(buttonElement);
