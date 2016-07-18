@@ -11,7 +11,7 @@ export function el(selector) {
 export function childEl(parentElement, selector) {
     const elements = parentElement.querySelectorAll(selector);
     if (elements.length === 0) {
-        return null;
+        return [];
     }
     
     return elements;

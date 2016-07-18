@@ -28,7 +28,7 @@ function roomConnection(io, socket, repo, data) {
         });
 
         let acceptStory = require("./acceptStory.js");
-        socket.on('accept_story', (data) => {
+        socket.on('user_estimated', (data) => {
             acceptStory(userSession, repo, data,
                 (actualRoom) => {
                     io.to(userSession.room_name).emit('alert', "The user " + userSession.user_name + " made an estimation.");

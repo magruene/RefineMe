@@ -4,7 +4,8 @@ let addButton = el('#add-button')[0];
 let storyNameInput = el('#storyName')[0];
 let storyNameLabel = el('#storyNameLabel')[0];
 
-export function init(server, room) {
+export function init(socketConnection, room) {
+
     addButton.addEventListener('click', (event) => {
         let storyName = storyNameInput.value;
         if (storyName === '') {
@@ -12,7 +13,7 @@ export function init(server, room) {
             storyNameLabel.className = 'active';
             return;
         }
-        server.emit('create_story', storyName);
+        socketConnection.emit('create_story', storyName);
         storyNameInput.value = '';
     });
 
@@ -24,7 +25,7 @@ export function init(server, room) {
         storyNameInput.className = 'valid';
     });
 
-    server.on('storyCreated', createStoryList);
+    socketConnection.on('storyCreated', createStoryList);
 
     function createStoryList(room) {
         if (room.stories) {
@@ -45,7 +46,7 @@ export function init(server, room) {
                     storyElement.classList = '';
                     storyElement.classList = 'bold active';
 
-                    server.emit('select_story', event.target.textContent);
+                    socketConnection.emit('select_story', event.target.textContent);
                 });
                 storyElement.classList = 'bold';
                 storyElement.appendChild(buttonElement);

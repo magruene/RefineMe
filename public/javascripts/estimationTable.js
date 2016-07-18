@@ -21,6 +21,10 @@ export function init(givenSocketConnection) {
             updateCards(room);
         }
     });
+
+    socketConnection.on("selectedStory", function (room) {
+        updateCards(room);
+    });
 }
 
 Object.filter = (obj, predicate) =>
@@ -31,8 +35,8 @@ Object.filter = (obj, predicate) =>
 function completeEstimation(finishedStory) {
     finishedStory.estimates.forEach((estimate) => {
         let card = el('#card_' + escape(estimate.user));
-        childEl(card, "#estimationDone").style.display = 'none';
-        var storyText = childEl(card, "#storyText");
+        childEl(card, "#estimationDone")[0].style.display = 'none';
+        var storyText = childEl(card, "#storyText")[0];
         storyText.innerHTML = estimate.estimation;
         storyText.style.display = 'block';
     });
@@ -62,27 +66,37 @@ function updateCards(room) {
         })
     }
 
-    let sort = room.users;
-
-    $.each(sort, function (index, user) {
+    $.each(room.users, function (index, user) {
         let isCurrentUser = user === session_username;
-        let ownCardDoesNotYetExist = $("#card_" + escape(session_username)).length === 0;
+        let ownCardDoesNotYetExist = el("#card_" + escape(session_username)).length === 0;
         let card = cardTemplate.replace(new RegExp("{{user}}", "g"), escape(user));
         card = card.replace(new RegExp("{{actual_user}}", "g"), user);
+        let tempContainer = document.createElement("div");
+        tempContainer.innerHTML = card;
+        let cardElement = tempContainer.firstChild;
+        let usersElement = el('#users')[0];
 
         if (isCurrentUser && ownCardDoesNotYetExist) {
-            $('#users').append(card);
-            let $card = $('#card_' + escape(user));
-            $card.addClass("active");
+            usersElement.appendChild(cardElement);
+            var estimationNumbers = childEl(cardElement, '.collection a');
+            
+            for(let estimationNumber of estimationNumbers) {
+                estimationNumber.addEventListener('click', (event) => {
+                    let estimationAsText = event.target.textContent;
+                    server.emit('user_estimated', estimationAsText);
+                });    
+            }
         } else if (!isCurrentUser) {
-            $('#users').append(card);
+            childEl(cardElement, '.estimation-container').style.visibility = 'hidden';
+            usersElement.appendChild(cardElement);
+
         }
     });
 
     if (activeStory) {
         $.each(activeStory.estimates, function (index, estimate) {
             let user = estimate.user;
-                        let $card = $('#card_' + user);
+            let $card = $('#card_' + user);
 
             if (user === session_username) {
                 $($card.find("#storyText")).html(estimate.estimation);

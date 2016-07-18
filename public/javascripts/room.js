@@ -43,11 +43,5 @@ let SocketConnection;
                 });
             }
         });
-
-        SocketConnection.on("selectedStory", function (room) {
-            updateView(room);
-        });
-
-        
     }
 })(window, jQuery);
